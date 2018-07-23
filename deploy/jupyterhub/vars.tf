@@ -1,0 +1,1 @@
+variable "jupyterhub-config" {}
