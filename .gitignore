@@ -3,8 +3,7 @@
 .project
 .settings/
 
-# IntelliJ
-.idea
+# Intellij
 .idea/
 *.iml
 *.iws
@@ -16,19 +15,12 @@
 logs
 *.log
 
+# Local Config
+config.json
+
 # TypeScript
 *.js.map
 **/*.js
-!notebookRun.js
-!notebookLogic.js
-!routes.js
-!server.js
-
-# LabShare Packages
-packages
-
-# Local Config
-config.json
 
 # Runtime data
 pids
@@ -49,26 +41,16 @@ test/coverage
 build/Release
 
 # Dependency directories
-# Commenting this out is preferred by some people, see
-# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git-
 node_modules
-bower_components
-package-lock.json
 
 # Users Environment Variables
 .lock-wscript
 
+#Releases
+dist
+
 # Docker settings
 .env
 
-# Releases
-apps
-release
-dist
-
-# Visual studio code
-.vscode
-devindex.*
-
-SharePointSelfSignedCert.key
-/facilities.json
+# NPM
+package-lock.json
