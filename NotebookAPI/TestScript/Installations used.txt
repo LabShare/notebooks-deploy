@@ -1,9 +1,0 @@
-pip install nbparameterise 
-npm install python-shell
-npm install node-fetch --save
-npm install method-override
-npm i xmlhttprequest
-npm i ws
-npm i jupyter-js-services (depreciated)
-{npm i -g npm
- npm i --save lodash}
