@@ -69,10 +69,10 @@ pipeline {
                     withKubeConfig([credentialsId: 'aws-kube-admin',
                             serverUrl: 'https://kubeapi.ci.aws.labshare.org:6443',
                             contextName: 'aws-ci']) {
-                    #    sh '''
-                    #    kubectl delete configmap labshare-config
-                    #    kubectl create configmap labshare-config --from-file=config.json --from-file=facilities.json
-                    #   '''
+                        sh '''
+                        kubectl delete configmap jupyterhub-config
+                        kubectl create configmap jupyterhub-config --from-file=config.json --from-file=facilities.json
+                       '''
                     }
                 }
 
