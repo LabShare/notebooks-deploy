@@ -22,7 +22,7 @@ pipeline {
 
                     currentBuild.displayName = packageJSONVersion
                     env.BUILD_VERSION = packageJSONVersion
-                    env.BUILD = 'true'
+                    env.BUILD = 'false'
                 }
             }
         }
@@ -62,24 +62,10 @@ pipeline {
         }
         stage('Deploy docker to kubernetes') {
             steps {
-                configFileProvider([
-                    configFile(fileId: '', targetLocation: 'config.json'),
-                    configFile(fileId: '', targetLocation: 'facilities.json')
-                ]) {
-                    withKubeConfig([credentialsId: 'aws-kube-admin',
-                            serverUrl: 'https://kubeapi.ci.aws.labshare.org:6443',
-                            contextName: 'aws-ci']) {
-                        sh '''
-                        kubectl delete configmap jupyterhub-config
-                        kubectl create configmap jupyterhub-config --from-file=config.json --from-file=facilities.json
-                       '''
-                    }
-                }
-
                 withCredentials([string(credentialsId: 'KEYMETRICS_PUBLIC', variable: 'KEYMETRICS_PUBLIC'),
                                 string(credentialsId: 'KEYMETRICS_SECRET', variable: 'KEYMETRICS_SECRET')]) {
                     kubernetesDeploy(kubeconfigId: 'aws-ci-kube',
-                        configs: 'k8s-deploy.yaml',
+                        configs: 'jupyterhub.yaml',
                         enableConfigSubstitution: true)
                     }
                 }
