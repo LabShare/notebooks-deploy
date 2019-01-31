@@ -63,8 +63,8 @@ pipeline {
         stage('Deploy docker to kubernetes') {
             steps {
                 configFileProvider([
-                   # configFile(fileId: 'labshare-services-ci-config', targetLocation: 'config.json'),
-                   # configFile(fileId: 'labshare-services-ci-facility', targetLocation: 'facilities.json')
+                    configFile(fileId: '', targetLocation: 'config.json'),
+                    configFile(fileId: '', targetLocation: 'facilities.json')
                 ]) {
                     withKubeConfig([credentialsId: 'aws-kube-admin',
                             serverUrl: 'https://kubeapi.ci.aws.labshare.org:6443',
