@@ -1,0 +1,51 @@
+# Kubernetes deployment of JupyterHub application for cloud-based provider
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jupyterhub
+  labels:
+    application: jupyterhub
+spec:
+  selector:
+    matchLabels:
+      application: jupyterhub
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        application: jupyterhub
+    spec:
+      serviceAccountName: jupyterhub-sa
+      containers:
+        - name: jupyterhub
+          image: labshare/jupyterhub:${BUILD_VERSION}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+              # This name will be used in the Service.
+              name: jupyter-http
+            - containerPort: 8081
+              # This name will be used in the Service.
+              name: jupyter-in
+          command: [
+            "jupyterhub",
+            "-f",
+            "/srv/jupyterhub/config/jupyterhub-config.py",
+            "--debug"
+          ]
+          volumeMounts:
+            - mountPath: /srv/jupyterhub/config/jupyterhub-config.py
+              name: jupyterhub-config
+              subPath: jupyterhub-config.py
+          env:
+            - name: JUPYTERHUB_INTERNAL_SERVICE_HOST
+              value: "a70e73575297f11e99da2025abb9340b-1394867676.us-east-1.elb.amazonaws.com"
+      volumes:
+        - name: jupyterhub-config
+          configMap:
+              name: jupyterhub-config
+              items:
+              - key: jupyterhub-config.py
+                path: jupyterhub-config.py

@@ -34,7 +34,7 @@ pipeline {
         stage('Deploy docker to kubernetes') {
             steps {
                     kubernetesDeploy(kubeconfigId: 'aws-ci-kube',
-                        configs: 'jupyterhub.yaml',
+                        configs: 'jupyterhub-deployment.yaml',
                         enableConfigSubstitution: true)
                 }
             }
