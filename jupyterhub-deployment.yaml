@@ -39,9 +39,6 @@ spec:
             - mountPath: /srv/jupyterhub/config/jupyterhub-config.py
               name: jupyterhub-config
               subPath: jupyterhub-config.py
-          env:
-            - name: JUPYTERHUB_INTERNAL_SERVICE_HOST
-              value: "a70e73575297f11e99da2025abb9340b-1394867676.us-east-1.elb.amazonaws.com"
       volumes:
         - name: jupyterhub-config
           configMap:
