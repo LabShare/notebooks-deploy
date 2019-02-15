@@ -4,7 +4,7 @@ kind: Service
 metadata:
   name: jupyterhub
   annotations:
-    # Note that the backend talks over HTTP.
+    # Note that the backend talks over TCP. Required to enable websocket connections.
     service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "tcp"
     # Fill in with the ARN of your certificate.
     service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-east-1:063208468694:certificate/63a30186-d66a-411c-b5c2-5264ca23c2b1
