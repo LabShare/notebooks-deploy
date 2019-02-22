@@ -14,6 +14,7 @@
 1. Build docker images using `npm run build`.
 1. Start JupyterHub on `localhost:8000` using `npm start`.
 1. JupyterHub is setup with DummyAuthenticator by default. Use any username or password to login.
+1. To stop the running deployment use `npm run stop`.
 
 ## Deployment
 
