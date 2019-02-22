@@ -10,6 +10,7 @@
 
 ## Development
 ### Running JupyterHub Locally
+1. Create an .env file in your working directory. See the [sample-env](./sample-env) for an example. Docker-compose uses these environment variables to populate image and container arguments and environment variables. 
 1. Build docker images using `npm run build`.
 1. Start JupyterHub on `localhost:8000` using `npm start`.
 1. JupyterHub is setup with DummyAuthenticator by default. Use any username or password to login.
