@@ -1,24 +1,9 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-# JupyterHub/nb2kg/Kernel Gateway configuration file
 version: "3"
 
 services:
-  kernel-gateway:
-    build:
-      context: kernel-gateway
-      args:
-        DOCKER_NOTEBOOK_IMAGE: ${DOCKER_NOTEBOOK_IMAGE}
-        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
-        KERNEL_GATEWAY_VERSION: ${KERNEL_GATEWAY_VERSION}
-    image: kernel-gateway
-    container_name: kg
-    restart: always
-    environment:
-      KG_ALLOW_ORIGIN: ${KG_ALLOW_ORIGIN}
-      KG_AUTH_TOKEN: ${KG_AUTH_TOKEN}
-
   hub-db:
     image: postgres:9.5
     container_name: jupyterhub-db
@@ -33,7 +18,6 @@ services:
   hub:
     depends_on:
       - hub-db
-      - kernel-gateway
     build:
       context: jupyterhub
       args:
@@ -56,11 +40,9 @@ services:
       # All containers will join this network
       DOCKER_NETWORK_NAME: jupyterhub-network
       # JupyterHub will spawn this Notebook image for users
-      DOCKER_NOTEBOOK_IMAGE: jupyterhub-user
+      DOCKER_NOTEBOOK_IMAGE: ${DOCKER_NOTEBOOK_IMAGE}
       # Notebook directory inside user image
       DOCKER_NOTEBOOK_DIR: ${DOCKER_NOTEBOOK_DIR}
-      # Using this run command
-      DOCKER_SPAWN_CMD: start-singleuser.sh --SingleUserNotebookApp.session_manager_class=nb2kg.managers.SessionManager --SingleUserNotebookApp.kernel_manager_class=nb2kg.managers.RemoteKernelManager --SingleUserNotebookApp.kernel_spec_manager_class=nb2kg.managers.RemoteKernelSpecManager
       # Postgres db info
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_HOST: hub-db
