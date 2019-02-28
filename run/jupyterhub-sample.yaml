@@ -1,0 +1,125 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jupyterhub-sa
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: jupyterhub-role
+rules:
+  - apiGroups: [""]
+    resources: ["*"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: jupyterhub-rb
+subjects:
+  - kind: ServiceAccount
+    name: jupyterhub-sa
+roleRef:
+  kind: Role
+  name: jupyterhub-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jupyterhub-config
+data:
+  jupyterhub-config.py: |
+    import os,sys,stat
+
+    c.JupyterHub.spawner_class='kubespawner.KubeSpawner'
+    c.KubeSpawner.start_timeout=1000
+
+    # Which container to spawn
+    c.KubeSpawner.image_spec='jupyter/minimal-notebook:87210526f381'
+    c.KubeSpawner.cmd = 'start-singleuser.sh'
+    c.KubeSpawner.args = ['--allow-root']
+    c.KubeSpawner.service_account='jupyterhub-sa'
+
+    c.JupyterHub.authenticator_class='dummyauthenticator.DummyAuthenticator'
+    c.JupyterHub.allow_named_servers=True
+    c.JupyterHub.ip='0.0.0.0'
+    c.JupyterHub.hub_ip='0.0.0.0'
+
+    # Required for AWS
+    c.JupyterHub.hub_connect_ip=os.environ['JUPYTERHUB_INTERNAL_SERVICE_HOST']
+
+    c.JupyterHub.cleanup_servers=True
+    # c.ConfigurableHTTPProxy.should_start=False
+    c.JupyterHub.cookie_secret_file = '/srv/jupyterhub/jupyterhub_cookie_secret'
+---
+# Kubernetes deployment of JupyterHub application for cloud-based provider
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jupyterhub
+  labels:
+    application: jupyterhub
+spec:
+  selector:
+    matchLabels:
+      application: jupyterhub
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        application: jupyterhub
+    spec:
+      serviceAccountName: jupyterhub-sa
+      containers:
+        - name: jupyterhub
+          image: labshare/jupyterhub:0.1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+              # This name will be used in the Service.
+              name: jupyter-http
+            - containerPort: 8081
+              # This name will be used in the Service.
+              name: jupyter-in
+          command: [
+            "jupyterhub",
+            "-f",
+            "/srv/jupyterhub/config/jupyterhub-config.py",
+            "--debug"
+          ]
+          volumeMounts:
+            - mountPath: /srv/jupyterhub/config/jupyterhub-config.py
+              name: jupyterhub-config
+              subPath: jupyterhub-config.py
+      volumes:
+        - name: jupyterhub-config
+          configMap:
+              name: jupyterhub-config
+              items:
+              - key: jupyterhub-config.py
+                path: jupyterhub-config.py
+---
+# Service definition for a http/https service.
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyterhub
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 8000
+  type: LoadBalancer
+---
+# Service definition for a http/https service.
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyterhub-internal
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8081
+      targetPort: 8081
+  type: ClusterIP
