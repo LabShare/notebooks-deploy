@@ -35,10 +35,35 @@ data:
     c.JupyterHub.spawner_class='kubespawner.KubeSpawner'
     c.KubeSpawner.start_timeout=1000
 
+    c.KubeSpawner.pvc_name_template = 'claim-{username}'
+    c.KubeSpawner.storage_class = 'gp2'
+    c.KubeSpawner.storage_capacity = '100Mi'
+    c.KubeSpawner.storage_access_modes = ['ReadWriteOnce']
+
+    c.KubeSpawner.storage_pvc_ensure = True
+
+    c.KubeSpawner.volume_mounts = [
+      {
+        'mountPath': '/opt/notebooks',
+        'name': 'volume-{username}'
+      }
+    ]
+    c.KubeSpawner.volumes = [
+      {
+          'name': 'volume-{username}',
+          'persistentVolumeClaim': {
+            'claimName': 'claim-{username}'
+          }
+      }
+    ]
+
     # Which container to spawn
-    c.KubeSpawner.image_spec='jupyter/minimal-notebook:87210526f381'
-    c.KubeSpawner.cmd = 'start-singleuser.sh'
+    c.KubeSpawner.image_spec = 'labshare/polyglot-notebook:0.1.2'
+    c.KubeSpawner.default_url = '/lab'
+    # c.KubeSpawner.cmd = 'start-singleuser.sh'
+    c.KubeSpawner.cmd = ['jupyter-labhub']
     c.KubeSpawner.args = ['--allow-root']
+    c.KubeSpawner.working_dir = '/opt/notebooks'
     c.KubeSpawner.service_account='jupyterhub-sa'
 
     c.JupyterHub.authenticator_class='dummyauthenticator.DummyAuthenticator'
@@ -111,6 +136,8 @@ spec:
     - port: 80
       targetPort: 8000
   type: LoadBalancer
+  selector:
+    application: jupyterhub
 ---
 # Service definition for a http/https service.
 apiVersion: v1
@@ -123,3 +150,5 @@ spec:
     - port: 8081
       targetPort: 8081
   type: ClusterIP
+  selector:
+    application: jupyterhub
