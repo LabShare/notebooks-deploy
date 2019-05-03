@@ -1,7 +1,9 @@
-ARG BASE_CONTAINER=jupyter/minimal-notebook
-FROM $BASE_CONTAINER
+FROM jupyter/minimal-notebook:87210526f381
 
 MAINTAINER Konstantin Taletskiy <konstantin.taletskiy@axleinfo.com>
+
+# Track semantic versioning
+COPY VERSION /
 
 USER root
 
@@ -41,6 +43,7 @@ COPY settings-docker.xml /usr/share/maven/ref/
 
 USER $NB_UID
 
+RUN rm -f /opt/conda/conda-meta/pinned
 RUN conda install --quiet --yes \
     'conda-forge::blas=*=openblas' \
     'ipywidgets=7.4*' \
