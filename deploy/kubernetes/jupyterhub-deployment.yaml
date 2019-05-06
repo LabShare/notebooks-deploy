@@ -1,33 +1,6 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: jupyterhub-config
-data:
-  jupyterhub-config.py: |
-    import os,sys,stat
-
-    c.JupyterHub.spawner_class='kubespawner.KubeSpawner'
-    c.KubeSpawner.start_timeout=1000
-
-    # Which container to spawn
-    c.KubeSpawner.image_spec='labshare/polyglot-notebook:${NOTEBOOK_VERSION}'
-    c.KubeSpawner.cmd = 'start-singleuser.sh'
-    c.KubeSpawner.args = ['--allow-root']
-    c.KubeSpawner.service_account='jupyterhub-sa'
-
-    c.JupyterHub.authenticator_class='dummyauthenticator.DummyAuthenticator'
-    c.JupyterHub.allow_named_servers=True
-    c.JupyterHub.ip='0.0.0.0'
-    c.JupyterHub.hub_ip='0.0.0.0'
-
-    # Required for AWS
-    c.JupyterHub.hub_connect_ip=os.environ['JUPYTERHUB_INTERNAL_SERVICE_HOST']
-
-    c.JupyterHub.cleanup_servers=False
-    # c.ConfigurableHTTPProxy.should_start=False
-    c.JupyterHub.cookie_secret_file = '/srv/jupyterhub/jupyterhub_cookie_secret'
----
-apiVersion: apps/v1
+# apps/v1 is not supported in jenkinsci/kubernetes-cd-plugin
+# https://github.com/jenkinsci/kubernetes-cd-plugin/issues/50
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: jupyterhub
