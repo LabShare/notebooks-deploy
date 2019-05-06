@@ -9,7 +9,7 @@ pipeline {
         PROJECT_NAME = "labshare-compute"
         DOCKER_REPO_NAME = "labshare/labshare-compute"
         CONFIG_HASH = """${sh (
-            script: "shasum deploy/kubernetes/jupyterhub-deployment.yaml | cut -d ' ' -f 1",
+            script: "shasum deploy/kubernetes/jupyterhub-configs.yaml | cut -d ' ' -f 1",
             returnStdout: true
         )}"""
         BUILD_HUB = """${sh (
@@ -76,6 +76,7 @@ pipeline {
         stage('Deploy JupyterHub to Kubernetes') {
             steps {
                 dir('deploy/kubernetes') {
+                    kubernetesDeploy(kubeconfigId: 'aws-ci-kube', configs: 'jupyterhub-configs.yaml', enableConfigSubstitution: true)
                     kubernetesDeploy(kubeconfigId: 'aws-ci-kube', configs: 'jupyterhub-deployment.yaml', enableConfigSubstitution: true)
                 }
             }
