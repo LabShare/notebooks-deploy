@@ -1,5 +1,5 @@
 # Jupyterhub and kernel gateway version
-JUPYTERHUB_VERSION=0.9.4
+JUPYTERHUB_VERSION=1.0.0
 KERNEL_GATEWAY_VERSION=1.1.2
 
 # Single-user Jupyter Notebook server container image

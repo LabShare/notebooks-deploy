@@ -1,4 +1,4 @@
-FROM jupyterhub/jupyterhub:0.9.4
+FROM jupyterhub/jupyterhub:1.0.0
 
 # Track semantic versioning
 COPY VERSION /
