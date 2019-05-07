@@ -46,7 +46,10 @@ pipeline {
             }
         }
         stage('Build JupyterHub Docker') {
-            when { expression { return !env.SKIP_BUILD && (env.BUILD_HUB == 0 || !env.GIT_PREVIOUS_SUCCESSFUL_COMMIT) } }
+            when {
+                environment name: 'SKIP_BUILD', value: 'false'
+                environment name: 'BUILD_HUB', value: '0'
+            }
             steps {
                 script {
                     dir('deploy/docker/jupyterhub') {
@@ -60,7 +63,10 @@ pipeline {
             }
         }
         stage('Build Jupyter Notebook Docker') {
-            when { expression { return !env.SKIP_BUILD && (env.BUILD_NOTEBOOK == 0 || !env.GIT_PREVIOUS_SUCCESSFUL_COMMIT) } }
+            when {
+                environment name: 'SKIP_BUILD', value: 'false'
+                environment name: 'BUILD_NOTEBOOK', value: '0'
+            }
             steps {
                 script {
                     dir('deploy/docker/notebook') {
