@@ -4,5 +4,8 @@
 OAUTH_CLIENT_ID=
 OAUTH_CLIENT_SECRET=
 ORGANIZATION=
-AUTH_URL=https://a.labshare.org/_api
-OAUTH_CALLBACK_URL=http://localhost:9000/hub/oauth_callback
+AUTH_URL=https://a.labshare.org/_auth/vTest
+OAUTH_CALLBACK_URL=https://127.0.0.1:9000/hub/oauth_callback
+
+OAUTH2_AUTHORIZE_URL=$AUTH_URL/auth/$ORGANIZATION/authorize
+OAUTH2_TOKEN_URL=$AUTH_URL/auth/$ORGANIZATION/oidc/token
