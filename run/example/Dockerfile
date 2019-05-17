@@ -14,9 +14,5 @@ ENV OAUTHENTICATOR_DIR /srv/oauthenticator
 
 ADD jupyterhub_config.py jupyterhub_config.py
 
-ADD addusers.sh /srv/oauthenticator/addusers.sh
-ADD userlist /srv/oauthenticator/userlist
 ADD ssl /srv/oauthenticator/ssl
 RUN chmod 700 /srv/oauthenticator
-
-RUN ["sh", "/srv/oauthenticator/addusers.sh"]

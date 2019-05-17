@@ -1,11 +1,14 @@
 # Add your oauth config to this file,
 # and run the container with `docker run -it -p 9000:8000 --env-file=env jupyterhub-oauth`
 
-OAUTH_CLIENT_ID=
+ADMIN_USERS=
+
+OAUTH_CLIENT_ID=jupyterhub-local
 OAUTH_CLIENT_SECRET=
-ORGANIZATION=
-AUTH_URL=https://a.labshare.org/_auth/vTest
+TENANT=polus
+AUTH_URL=https://a-qa.labshare.org/_auth/vTest
+
 OAUTH_CALLBACK_URL=https://127.0.0.1:9000/hub/oauth_callback
 
-OAUTH2_AUTHORIZE_URL=$AUTH_URL/auth/$ORGANIZATION/authorize
-OAUTH2_TOKEN_URL=$AUTH_URL/auth/$ORGANIZATION/oidc/token
+OAUTH2_AUTHORIZE_URL=https://a-qa.labshare.org/_auth/vTest/auth/polus/authorize
+OAUTH2_TOKEN_URL=https://a-qa.labshare.org/_auth/vTest/auth/polus/oidc/token
