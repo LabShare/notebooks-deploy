@@ -36,6 +36,43 @@ spec:
             "/srv/jupyterhub/config/jupyterhub-config.py",
             "--debug"
           ]
+          env:
+            - name: OAUTH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: jupyterhub-auth-config
+                  key: client_id
+            - name: OAUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jupyterhub-auth-config
+                  key: client_secret
+            - name: TENANT
+              valueFrom:
+                secretKeyRef:
+                  name: jupyterhub-auth-config
+                  key: tenant
+            - name: AUTH_URL
+              valueFrom:
+                secretKeyRef:
+                  name: jupyterhub-auth-config
+                  key: auth_url
+            - name: OAUTH_CALLBACK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: jupyterhub-auth-config
+                  key: oauth_callback_url
+            - name: ADMIN_USERS
+              valueFrom:
+                secretKeyRef:
+                  name: jupyterhub-auth-config
+                  key: admin_users
+            - name: OAUTH2_AUTHORIZE_URL
+              value: "$(AUTH_URL)/auth/$(TENANT)/authorize"
+            - name: OAUTH2_TOKEN_URL
+              value: "$(AUTH_URL)/auth/$(TENANT)/oidc/token"
+            - name: OAUTH2_USERDATA_URL
+              value: "$(AUTH_URL)/auth/me"
           volumeMounts:
             - mountPath: /srv/jupyterhub/config/jupyterhub-config.py
               name: jupyterhub-config
