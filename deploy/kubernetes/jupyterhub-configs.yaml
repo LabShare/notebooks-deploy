@@ -16,7 +16,7 @@ data:
     c.KubeSpawner.image_spec='labshare/polyglot-notebook:${NOTEBOOK_VERSION}'
     c.KubeSpawner.cmd = 'start-singleuser.sh'
     c.KubeSpawner.args = ['--allow-root']
-    c.KubeSpawner.service_account='jupyterhub-sa'
+    c.KubeSpawner.service_account='jupyteruser-sa'
 
     c.JupyterHub.allow_named_servers=True
     c.JupyterHub.ip='0.0.0.0'
