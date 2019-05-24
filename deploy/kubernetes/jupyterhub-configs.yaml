@@ -4,7 +4,7 @@ metadata:
   name: jupyterhub-config
 data:
   jupyterhub-config.py: |
-    import os
+    import os,sys
     from oauthenticator.generic import LocalGenericOAuthenticator
 
     c = get_config()
