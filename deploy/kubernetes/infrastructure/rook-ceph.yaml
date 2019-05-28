@@ -754,3 +754,58 @@ spec:
         emptyDir: {}
       - name: default-config-dir
         emptyDir: {}
+---
+#################################################################################################################
+# Define the settings for the rook-ceph cluster with custom settings for a CI/CD cluster.
+# All nodes with available raw devices will be used for the Ceph cluster. At least three nodes are required
+# in this example. See the documentation for more details on storage settings available.
+#################################################################################################################
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: rook-ceph
+  namespace: rook-ceph
+spec:
+  cephVersion:
+    image: ceph/ceph:v14.2.1-20190430
+    allowUnsupported: false
+  dataDirHostPath: /var/lib/rook
+  mon:
+    count: 3
+    allowMultiplePerNode: true
+  dashboard:
+    enabled: true
+  network:
+    hostNetwork: false
+  storage:
+    useAllNodes: true
+    useAllDevices: false
+    config:
+      databaseSizeMB: "1024"
+      journalSizeMB: "1024"
+      odsPerDevice: "1"
+    directories: 
+      - path: /var/lib/rook
+---
+#################################################################################################################
+# Create a filesystem with settings with replication enabled for a production environment.
+# A minimum of 3 OSDs on different nodes are required in this example.
+#  kubectl create -f filesystem.yaml
+#################################################################################################################
+apiVersion: ceph.rook.io/v1
+kind: CephFilesystem
+metadata:
+  name: myfs
+  namespace: rook-ceph
+spec:
+  metadataPool:
+    replicated:
+      size: 2
+  dataPools:
+    - replicated:
+        size: 2
+  metadataServer:
+    activeCount: 1
+    activeStandby: true
+
+
