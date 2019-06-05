@@ -13,7 +13,7 @@ data:
     c.KubeSpawner.start_timeout=1000
 
     # Which container to spawn
-    c.KubeSpawner.image_spec='labshare/polyglot-notebook:${NOTEBOOK_VERSION}'
+    c.KubeSpawner.image_spec='labshare/polyglot-notebook:NOTEBOOK_VERSION_VALUE'
     c.KubeSpawner.default_url = '/lab'
     c.KubeSpawner.uid = 1000 #uid 1000 corresponds to jovyan, uid 0 to root
     c.KubeSpawner.cmd = ['jupyter-labhub']

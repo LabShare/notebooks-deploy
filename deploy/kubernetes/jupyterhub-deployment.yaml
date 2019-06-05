@@ -16,12 +16,12 @@ spec:
       labels:
         application: jupyterhub
       annotations:
-        configHash: ${CONFIG_HASH}
+        configHash: CONFIG_HASH_VALUE
     spec:
       serviceAccountName: jupyterhub-sa
       containers:
         - name: jupyterhub
-          image: labshare/jupyterhub:${HUB_VERSION}
+          image: labshare/jupyterhub:HUB_VERSION_VALUE
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
