@@ -20,6 +20,28 @@ data:
     c.KubeSpawner.working_dir = '/opt/notebooks'
     c.KubeSpawner.service_account='jupyteruser-sa'
 
+    # Storage configuration
+    c.KubeSpawner.pvc_name_template = 'claim-{username}'
+    c.KubeSpawner.storage_class = 'rook-ceph-block'
+    c.KubeSpawner.storage_capacity = '100Mi'
+    c.KubeSpawner.storage_access_modes = ['ReadWriteOnce']
+    c.KubeSpawner.storage_pvc_ensure = True
+
+    c.KubeSpawner.volume_mounts = [
+      {
+        'mountPath': '/opt/notebooks',
+        'name': 'volume-{username}'
+      }
+    ]
+    c.KubeSpawner.volumes = [
+      {
+        'name': 'volume-{username}',
+        'persistentVolumeClaim': {
+          'claimName': 'claim-{username}'
+        }
+      }
+    ]
+
     c.JupyterHub.allow_named_servers=True
     c.JupyterHub.ip='0.0.0.0'
     c.JupyterHub.hub_ip='0.0.0.0'
