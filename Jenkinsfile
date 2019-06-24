@@ -88,6 +88,7 @@ pipeline {
 		    sh '''
     			kubectl apply -f ./deploy/kubernetes/jupyterhub-configs.yaml
     			kubectl apply -f ./deploy/kubernetes/jupyterhub-deployment.yaml
+                        kubectl apply -f ./deploy/kubernetes/storage.yaml
 		    '''
 		}
             }
