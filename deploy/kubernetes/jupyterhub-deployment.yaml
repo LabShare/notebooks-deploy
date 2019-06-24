@@ -93,4 +93,3 @@ spec:
               items:
               - key: cull-idle-servers.py
                 path: cull-idle-servers.py
-          
