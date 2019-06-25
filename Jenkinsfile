@@ -84,11 +84,11 @@ pipeline {
 		withAWS(credentials:'aws-jenkins-eks') {
 		    sh "sed -i 's/NOTEBOOK_VERSION_VALUE/${NOTEBOOK_VERSION}/g' ./deploy/kubernetes/jupyterhub-configs.yaml"
 		    sh "sed -i 's/HUB_VERSION_VALUE/${HUB_VERSION}/g' ./deploy/kubernetes/jupyterhub-deployment.yaml"
-		    sh "sed -n 's/CONFIG_HASH_VALUE/${CONFIG_HASH}/g' ./deploy/kubernetes/jupyterhub-deployment.yaml"
+		    sh "sed -i 's/CONFIG_HASH_VALUE/${CONFIG_HASH}/g' ./deploy/kubernetes/jupyterhub-deployment.yaml"
 		    sh '''
     			kubectl apply -f ./deploy/kubernetes/jupyterhub-configs.yaml
     			kubectl apply -f ./deploy/kubernetes/jupyterhub-deployment.yaml
-                        kubectl apply -f ./deploy/kubernetes/storage.yaml
+    			kubectl apply -f ./deploy/kubernetes/storage.yaml
 		    '''
 		}
             }
