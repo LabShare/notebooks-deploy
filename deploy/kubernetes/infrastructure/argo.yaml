@@ -264,16 +264,30 @@ spec:
         name: workflow-controller
       serviceAccountName: argo
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argo-user-sa
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: argo-user-role
+rules:
+  - apiGroups: ["argoproj.io"]
+    resources: ["workflows"]
+    verbs: ["delete", "deletecollection", "get", "list", "patch", "create", "update", "watch"]
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: default-admin
-  namespace: default
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: admin
+  name: argo-user-rb
 subjects:
-- kind: ServiceAccount
-  name: default
-  namespace: default
+  - kind: ServiceAccount
+    namespace: default
+    name: argo-user-sa
+roleRef:
+  kind: Role
+  name: argo-user-role
+  apiGroup: rbac.authorization.k8s.io
