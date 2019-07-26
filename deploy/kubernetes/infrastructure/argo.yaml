@@ -200,6 +200,7 @@ metadata:
   name: argo-ui
   namespace: argo
 spec:
+  type: LoadBalancer
   ports:
   - port: 80
     targetPort: 8001
@@ -262,3 +263,17 @@ spec:
         image: argoproj/workflow-controller:v2.2.1
         name: workflow-controller
       serviceAccountName: argo
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: default-admin
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
