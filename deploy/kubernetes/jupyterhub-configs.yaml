@@ -12,30 +12,6 @@ data:
     c.JupyterHub.spawner_class='kubespawner.KubeSpawner'
     c.KubeSpawner.start_timeout=1000
 
-    # Which volumes to attach to Pod
-    c.KubeSpawner.volumes = [
-      {
-        'name': 'dataset-volume',
-        'flexVolume': {
-          'driver': 'ceph.rook.io/rook',
-          'fsType': 'ceph',
-          'options': {
-            'fsName': 'myfs',
-            'clusterNamespace': 'rook-ceph',
-            # path: /some/path/inside/cephfs
-          }
-        }
-      }
-    ]
-    
-    # Where to mount volumes
-    c.KubeSpawner.volume_mounts = [
-      {
-        'mountPath': '/opt/datasets',
-        'name': 'dataset-volume'
-      }
-    ]
-
     # Which container to spawn
     c.KubeSpawner.image_spec='labshare/polyglot-notebook:NOTEBOOK_VERSION_VALUE'
     c.KubeSpawner.default_url = '/lab'
@@ -44,25 +20,38 @@ data:
     c.KubeSpawner.working_dir = '/opt/notebooks'
     c.KubeSpawner.service_account='jupyteruser-sa'
 
-    # Storage configuration
+    # Per-user storage configuration
     c.KubeSpawner.pvc_name_template = 'claim-{username}'
     c.KubeSpawner.storage_class = 'rook-ceph-block'
-    c.KubeSpawner.storage_capacity = '100Mi'
+    c.KubeSpawner.storage_capacity = 'STORAGE_PER_USER_VALUE'
     c.KubeSpawner.storage_access_modes = ['ReadWriteOnce']
     c.KubeSpawner.storage_pvc_ensure = True
 
-    c.KubeSpawner.volume_mounts = [
-      {
-        'mountPath': '/opt/notebooks',
-        'name': 'volume-{username}'
-      }
-    ]
+    # Volumes to attach to Pod
     c.KubeSpawner.volumes = [
       {
         'name': 'volume-{username}',
         'persistentVolumeClaim': {
           'claimName': 'claim-{username}'
         }
+      },
+      {
+        'name': 'shared-volume',
+        'persistentVolumeClaim': {
+          'claimName': 'shared-pv-claim'
+        }
+      }
+    ]
+
+    # Where to mount volumes
+    c.KubeSpawner.volume_mounts = [
+      {
+        'mountPath': '/opt/notebooks',
+        'name': 'volume-{username}'
+      },
+      {
+        'mountPath': '/opt/shared',
+        'name': 'shared-volume'
       }
     ]
 

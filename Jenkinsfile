@@ -22,6 +22,8 @@ pipeline {
         )}"""
         HUB_VERSION = readFile(file: 'deploy/docker/jupyterhub/VERSION')
         NOTEBOOK_VERSION = readFile(file: 'deploy/docker/notebook/VERSION')
+        STORAGE_PER_USER = "100Mi"
+        STORAGE_SHARED = "80Gi"
     }
     triggers {
         pollSCM('H/5 * * * *')
@@ -83,6 +85,8 @@ pipeline {
             steps {
 		withAWS(credentials:'aws-jenkins-eks') {
 		    sh "sed -i 's/NOTEBOOK_VERSION_VALUE/${NOTEBOOK_VERSION}/g' ./deploy/kubernetes/jupyterhub-configs.yaml"
+            sh "sed -i 's/STORAGE_PER_USER_VALUE/${STORAGE_PER_USER}/g' ./deploy/kubernetes/jupyterhub-configs.yaml"
+            sh "sed -i 's/STORAGE_SHARED_VALUE/${STORAGE_SHARED}/g' ./deploy/kubernetes/jupyterhub-volumes.yaml"
 		    sh "sed -i 's/HUB_VERSION_VALUE/${HUB_VERSION}/g' ./deploy/kubernetes/jupyterhub-deployment.yaml"
 		    sh "sed -i 's/CONFIG_HASH_VALUE/${CONFIG_HASH}/g' ./deploy/kubernetes/jupyterhub-deployment.yaml"
 		    sh '''
