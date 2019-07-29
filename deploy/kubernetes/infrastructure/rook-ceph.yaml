@@ -650,7 +650,7 @@ spec:
       serviceAccountName: rook-ceph-system
       containers:
       - name: rook-ceph-operator
-        image: rook/ceph:master
+        image: rook/ceph:v1.0.4
         args: ["ceph", "operator"]
         volumeMounts:
         - mountPath: /var/lib/rook
@@ -800,12 +800,12 @@ metadata:
 spec:
   metadataPool:
     replicated:
-      size: 2
+      size: 3
   dataPools:
     - replicated:
-        size: 2
+        size: 3
   metadataServer:
-    activeCount: 1
+    activeCount: 3
     activeStandby: true
 ---
 #################################################################################################################
@@ -820,3 +820,26 @@ spec:
   failureDomain: host
   replicated:
     size: 3
+---
+#################################################################################################################
+# Enable Ceph Dashboard
+#################################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: rook-ceph-mgr-dashboard-external-https
+  namespace: rook-ceph
+  labels:
+    app: rook-ceph-mgr
+    rook_cluster: rook-ceph
+spec:
+  ports:
+  - name: dashboard
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    app: rook-ceph-mgr
+    rook_cluster: rook-ceph
+  sessionAffinity: None
+  type: LoadBalancer
