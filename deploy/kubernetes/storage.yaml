@@ -14,3 +14,40 @@ parameters:
   fstype: xfs
 # Optional, default reclaimPolicy is "Delete". Other options are: "Retain", "Recycle" as documented in https://kubernetes.io/docs/concepts/storage/storage-classes/
 reclaimPolicy: Delete
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    name: shared-volume
+  name: shared-pv
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: STORAGE_SHARED_VALUE
+  flexVolume:
+    driver: ceph.rook.io/rook
+    fsType: ceph
+    options:
+      clusterNamespace: rook-ceph
+      fsName: myfs
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: rook-ceph-block
+
+---
+# PVC for shared filesystem for all Jupyter users
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: shared-pv-claim
+spec:
+  storageClassName: rook-ceph-block
+  accessModes:
+  - ReadWriteMany
+  selector:
+    matchLabels:
+      name: shared-volume
+  resources:
+    requests:
+      storage: STORAGE_SHARED_VALUE
