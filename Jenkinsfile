@@ -89,7 +89,7 @@ pipeline {
                         sh "sed -i 's/STORAGE_SHARED_VALUE/${STORAGE_SHARED}/g' storage.yaml"
                         sh "sed -i 's/HUB_VERSION_VALUE/${HUB_VERSION}/g' jupyterhub-deployment.yaml"
 
-                        # Calculate config hash after substitution to connect configuration changes to deployment
+                        // Calculate config hash after substitution to connect configuration changes to deployment
                         env.CONFIG_HASH = sh "shasum jupyterhub-configs.yaml | cut -d ' ' -f 1 | tr -d '\n'"
 
                         sh "sed -i 's/CONFIG_HASH_VALUE/${CONFIG_HASH}/g' jupyterhub-deployment.yaml"
