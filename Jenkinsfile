@@ -10,10 +10,6 @@ pipeline {
     environment {
         PROJECT_NAME = "labshare-compute"
         DOCKER_REPO_NAME = "labshare/labshare-compute"
-        CONFIG_HASH = """${sh (
-            script: "shasum deploy/kubernetes/jupyterhub-configs.yaml | cut -d ' ' -f 1 | tr -d '\n'",
-            returnStdout: true
-        )}"""
         BUILD_HUB = """${sh (
             script: "git diff --name-only ${GIT_PREVIOUS_SUCCESSFUL_COMMIT} ${GIT_COMMIT} | grep 'jupyterhub/VERSION'",
             returnStatus: true
