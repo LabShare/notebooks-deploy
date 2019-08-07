@@ -3,7 +3,7 @@ FROM jupyter/minimal-notebook:307ad2bb5fce
 LABEL maintainer "konstantin.taletskiy@axleinfo.com"
 
 # Track semantic versioning
-#COPY VERSION /
+COPY VERSION /
 
 USER root
 
