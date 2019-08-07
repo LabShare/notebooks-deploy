@@ -1,6 +1,6 @@
-FROM jupyter/minimal-notebook:87210526f381
+FROM jupyter/minimal-notebook:307ad2bb5fce
 
-MAINTAINER Konstantin Taletskiy <konstantin.taletskiy@axleinfo.com>
+LABEL maintainer "konstantin.taletskiy@axleinfo.com"
 
 # Track semantic versioning
 COPY VERSION /
@@ -10,6 +10,7 @@ USER root
 # R, Octave, Java, Scala
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    ffmpeg \
     ssh \
     fonts-dejavu \
     tzdata \
@@ -46,38 +47,39 @@ USER $NB_UID
 RUN rm -f /opt/conda/conda-meta/pinned
 RUN conda install --quiet --yes \
     'conda-forge::blas=*=openblas' \
-    'ipywidgets=7.4*' \
-    'pandas=0.23*' \
+    'ipywidgets=7.5*' \
+    'pandas=0.25*' \
     'numexpr=2.6*' \
-    'matplotlib=2.2*' \
-    'scipy=1.1*' \
+    'matplotlib-base=3.1.*' \
+    'scipy=1.3*' \
     'seaborn=0.9*' \
-    'scikit-learn=0.20*' \
-    'scikit-image=0.14*' \
-    'sympy=1.1*' \
-    'cython=0.28*' \
+    'scikit-learn=0.21*' \
+    'scikit-image=0.15*' \
+    'sympy=1.4' \
+    'cython=0.29*' \
     'patsy=0.5*' \
-    'statsmodels=0.9*' \
-    'cloudpickle=0.5*' \
-    'dill=0.2*' \
-    'numba=0.38*' \
-    'bokeh=0.13*' \
-    'sqlalchemy=1.2*' \
+    'statsmodels=0.10*' \
+    'cloudpickle=1.2*' \
+    'dill=0.3*' \
+    'numba=0.45*' \
+    'bokeh=1.3*' \
+    'sqlalchemy=1.3*' \
     'hdf5=1.10*' \
-    'h5py=2.7*' \
+    'h5py=2.9*' \
     'vincent=0.4.*' \
-    'beautifulsoup4=4.6.*' \
-    'protobuf=3.*' \
-    'xlrd' \
+    'beautifulsoup4=4.8.*' \
+    'protobuf=3.9.*' \
+    'xlrd' && \
+    conda install --quiet --yes \
     'rpy2=2.9*' \
-    'r-base=3.5.1' \
-    'r-irkernel=0.8*' \
+    'r-base=3.6.1' \
+    'r-irkernel=1.0*' \
     'r-plyr=1.8*' \
-    'r-devtools=1.13*' \
+    'r-devtools=2.1*' \
     'r-tidyverse=1.2*' \
-    'r-shiny=1.2*' \
-    'r-rmarkdown=1.11*' \
-    'r-forecast=8.2*' \
+    'r-shiny=1.3*' \
+    'r-rmarkdown=1.14*' \
+    'r-forecast=8.7*' \
     'r-rsqlite=2.1*' \
     'r-reshape2=1.4*' \
     'r-nycflights13=1.0*' \
@@ -86,18 +88,64 @@ RUN conda install --quiet --yes \
     'r-crayon=1.3*' \
     'r-randomforest=4.6*' \
     'r-htmltools=0.3*' \
-    'r-sparklyr=0.9*' \
-    'r-htmlwidgets=1.2*' \
-    'r-hexbin=1.27*' && \
-    conda remove --quiet --yes --force qt pyqt && \
+    'r-sparklyr=1.0*' \
+    'r-htmlwidgets=1.3*' \
+    'r-hexbin=1.27*' \
+    'r-feather=0.3*' \
+    'r-highcharter=0.7*' \
+    'r-dygraphs=1.1*' \
+    'r-visnetwork=2.0*' \
+    'r-d3heatmap=0.6.1*' \
+    'r-plotly=4.9*' \
+    'r-rbokeh=0.6*' \
+    'r-networkd3=0.4*' \
+    'r-dt=0.5*' \
+    'r-threejs=0.3*' \
+    'r-rglwidget=0.2*' && \
+    conda install --quiet --yes -c conda-forge \
+                                feather-format \
+                                voila \
+                                itkwidgets \
+                                dvc && \
+    conda install -y -c bioconda gnuplot && \
+    conda install xeus-cling xwidgets xtensor xtl xframe && \
+    pip install \
+                octave_kernel==0.31.0 \
+                bash_kernel==0.7.2 \
+                nbformat==4.4.0 \
+                sos-notebook==0.19.15 \
+                sos-r==0.19.1 \
+                sos-bash==0.18.1 \
+                sos-matlab==0.18.3 \
+                sos-scala==0.18.0 \ 
+                sos-javascript==0.18.0 \
+                sos-python==0.18.1 \
+                sos-xeus-cling==0.1.0 \
+                sos-java==0.1.0 \
+                nbdime==1.0.7 \
+                jupyterlab-git==0.6.1 \
+                jupyterlab-quickopen==0.3.0 && \
+    # conda remove --quiet --yes --force qt pyqt && \
     conda clean -tipsy && \
-    # Activate ipywidgets extension in the environment that runs the notebook server
+    # Install Jupyter Server extensions
+    jupyter serverextension enable --py jupyterlab_git && \
+    # Install Jupyter Notebook extensions
     jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
-    # Also activate ipywidgets extension for JupyterLab
-    # Check this URL for most recent compatibilities
-    # https://github.com/jupyter-widgets/ipywidgets/tree/master/packages/jupyterlab-manager
-    jupyter labextension install @jupyter-widgets/jupyterlab-manager@^0.38.1 && \
-    jupyter labextension install jupyterlab_bokeh@0.6.3 && \
+    # Install JupyterLab extensions
+    jupyter labextension install @jupyter-widgets/jupyterlab-manager@1.0 \
+                                 jupyterlab_bokeh@1.0.0 \
+                                 transient-display-data@0.2.1 \
+                                 jupyterlab-sos@0.4.9 \
+                                 @jupyterlab/git@0.7.0 \
+                                 @jupyterlab/hub-extension@1.0.2 \
+                                 @jupyter-voila/jupyterlab-preview@0.1.0 \
+                                 itkwidgets@0.18.0 \
+                                 @aquirdturtle/collapsible_headings@0.3.1 \
+                                 jupyterlab-python-file@0.3.0 \
+                                 @parente/jupyterlab-quickopen@0.3.0 \
+                                 jupyterlab-spreadsheet@0.1.0 \
+                                 @krassowski/jupyterlab_go_to_definition@0.6.1 \
+                                 jupyterlab_filetree@0.2.1 && \
     npm cache clean --force && \
     rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
     rm -rf /home/$NB_USER/.cache/yarn && \
@@ -120,80 +168,48 @@ ENV XDG_CACHE_HOME /home/$NB_USER/.cache/
 RUN MPLBACKEND=Agg python -c "import matplotlib.pyplot" && \
     fix-permissions /home/$NB_USER
 
-USER root
-
-USER $NB_UID
-RUN conda install -c conda-forge feather-format
-
-# Bash kernel
-RUN pip install bash_kernel
-RUN python -m bash_kernel.install --user
-
-# Octave kernel
-RUN pip install octave_kernel
-RUN python -m octave_kernel install --user
-
 #Scala kernel
-ENV SCALA_VERSION 2.11.12 
-ENV ALMOND_VERSION 0.2.2
+ENV SCALA_VERSION 2.12.8 
+ENV ALMOND_VERSION 0.6.0
+RUN curl -Lo coursier https://git.io/coursier-cli && \
+    chmod +x coursier && \
+    ./coursier bootstrap \
+      -r jitpack \
+      -i user -I user:sh.almond:scala-kernel-api_$SCALA_VERSION:$ALMOND_VERSION \
+      sh.almond:scala-kernel_$SCALA_VERSION:$ALMOND_VERSION \
+      -o almond && \
+    ./almond --install && \
+    rm almond coursier
 
-USER $NB_UID
+# Java kernel
+RUN curl -L https://github.com/SpencerPark/IJava/releases/download/v1.3.0/ijava-1.3.0.zip > ijava-kernel.zip && \
+    unzip ijava-kernel.zip -d ijava-kernel \
+    && cd ijava-kernel \
+    && python install.py --sys-prefix \
+    && cd .. \
+    && rm ijava-kernel.zip \
+    && rm -rf ijava-kernel
 
-RUN curl -L -o coursier https://git.io/coursier-cli 
-RUN chmod +x coursier && \
-    ./coursier --help
-RUN ./coursier bootstrap \
-    -r jitpack \
-    -i user -I user:sh.almond:scala-kernel-api_$SCALA_VERSION:$ALMOND_VERSION \
-    sh.almond:scala-kernel_$SCALA_VERSION:$ALMOND_VERSION \
-    -o almond
-RUN ./almond --install
+# JavaScript and Typescript kernels
+RUN npm rebuild && \
+    npm install -g ijavascript itypescript && \
+    ijsinstall --spec-path=full && \
+    its --install=local
 
-# IJava kernel
-USER root
+# Enable language kernels
+RUN python -m bash_kernel.install --user && \
+    python -m octave_kernel install --user && \
+    python -m sos_notebook.install
 
-RUN curl -L https://github.com/SpencerPark/IJava/releases/download/v1.2.0/ijava-1.2.0.zip > ijava-kernel.zip
-RUN unzip ijava-kernel.zip -d ijava-kernel \
-  && cd ijava-kernel \
-  && python install.py --sys-prefix
+# Add missing kernel logos
+COPY coffee.png /opt/conda/share/jupyter/kernels/java/logo-64x64.png
+COPY bash.png /home/jovyan/.local/share/jupyter/kernels/bash/logo-64x64.png
 
-USER $NB_UID
+# Add symbolic link to the shared filesystem
+RUN ln -s /opt/shared shared
 
-# JavaScript kernel
-RUN npm rebuild
-RUN npm install -g ijavascript itypescript
-RUN ijsinstall --spec-path=full
-RUN its --install=local
-
-# C++ kernel and xtensor
-RUN conda install xeus-cling xwidgets notebook xtensor xtl xframe -c conda-forge/label/gcc7
-RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager
-
-#Install some R libraries
-RUN conda install -y -c bioconda gnuplot
-RUN R --slave -e 'install.packages("feather", repos="http://cran.stat.ucla.edu/")' 
-
-# Install SoS and extensions
-RUN conda install -y feather-format -c conda-forge
-RUN pip install nbformat --upgrade
-RUN pip install sos-notebook sos-r sos-bash sos-matlab sos-scala sos-javascript sos-python sos-xeus-cling sos-java --upgrade
-
-RUN python -m sos_notebook.install
-RUN jupyter labextension install jupyterlab-sos
-
-#Install jupyterlab-git tracking extension
-#RUN jupyter labextension install @jupyterlab/git
-#RUN pip install jupyterlab-git
-#RUN jupyter serverextension enable --py jupyterlab_git
-#Install jupyterlab-hub extension
-RUN jupyter labextension install @jupyterlab/hub-extension
-
-#Install nbdime
-RUN pip install --upgrade nbdime && \
-    jupyter lab build
-
-# #Run Jupyter Lab on start as joyvan
-USER $NB_UID
+#Rebuid JupyterLab to make sure all labextensions are included
+RUN jupyter lab build
 
 EXPOSE 8888
 # ENTRYPOINT ["/usr/local/bin/mvn-entrypoint.sh"]
