@@ -4,6 +4,8 @@ pipeline {
     }
     parameters {
         booleanParam(name: 'SKIP_BUILD', defaultValue: false, description: 'Skips Docker builds')
+	string(name: 'AWS_REGION', defaultValue: 'us-east-1', description: 'AWS Region to deploy')
+	string(name: 'KUBERNETES_CLUSTER_NAME', defaultValue: 'kube-eks-ci-compute', description: 'Kubernetes Cluster to deploy')
     }
     environment {
         PROJECT_NAME = "labshare-compute"
@@ -84,9 +86,10 @@ pipeline {
         stage('Deploy JupyterHub to Kubernetes') {
             steps {
 		withAWS(credentials:'aws-jenkins-eks') {
+		    sh "aws --region ${AWS_REGION} eks update-kubeconfig --name ${KUBERNETES_CLUSTER_NAME}"
 		    sh "sed -i 's/NOTEBOOK_VERSION_VALUE/${NOTEBOOK_VERSION}/g' ./deploy/kubernetes/jupyterhub-configs.yaml"
-            sh "sed -i 's/STORAGE_PER_USER_VALUE/${STORAGE_PER_USER}/g' ./deploy/kubernetes/jupyterhub-configs.yaml"
-            sh "sed -i 's/STORAGE_SHARED_VALUE/${STORAGE_SHARED}/g' ./deploy/kubernetes/storage.yaml"
+                    sh "sed -i 's/STORAGE_PER_USER_VALUE/${STORAGE_PER_USER}/g' ./deploy/kubernetes/jupyterhub-configs.yaml"
+                    sh "sed -i 's/STORAGE_SHARED_VALUE/${STORAGE_SHARED}/g' ./deploy/kubernetes/storage.yaml"
 		    sh "sed -i 's/HUB_VERSION_VALUE/${HUB_VERSION}/g' ./deploy/kubernetes/jupyterhub-deployment.yaml"
 		    sh "sed -i 's/CONFIG_HASH_VALUE/${CONFIG_HASH}/g' ./deploy/kubernetes/jupyterhub-deployment.yaml"
 		    sh '''
