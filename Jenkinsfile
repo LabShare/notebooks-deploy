@@ -10,10 +10,6 @@ pipeline {
     environment {
         PROJECT_NAME = "labshare-compute"
         DOCKER_REPO_NAME = "labshare/labshare-compute"
-        CONFIG_HASH = """${sh (
-            script: "shasum deploy/kubernetes/jupyterhub-configs.yaml | cut -d ' ' -f 1 | tr -d '\n'",
-            returnStdout: true
-        )}"""
         BUILD_HUB = """${sh (
             script: "git diff --name-only ${GIT_PREVIOUS_SUCCESSFUL_COMMIT} ${GIT_COMMIT} | grep 'jupyterhub/VERSION'",
             returnStatus: true
@@ -85,19 +81,25 @@ pipeline {
         }
         stage('Deploy JupyterHub to Kubernetes') {
             steps {
-		withAWS(credentials:'aws-jenkins-eks') {
-		    sh "aws --region ${AWS_REGION} eks update-kubeconfig --name ${KUBERNETES_CLUSTER_NAME}"
-		    sh "sed -i 's/NOTEBOOK_VERSION_VALUE/${NOTEBOOK_VERSION}/g' ./deploy/kubernetes/jupyterhub-configs.yaml"
-                    sh "sed -i 's/STORAGE_PER_USER_VALUE/${STORAGE_PER_USER}/g' ./deploy/kubernetes/jupyterhub-configs.yaml"
-                    sh "sed -i 's/STORAGE_SHARED_VALUE/${STORAGE_SHARED}/g' ./deploy/kubernetes/storage.yaml"
-		    sh "sed -i 's/HUB_VERSION_VALUE/${HUB_VERSION}/g' ./deploy/kubernetes/jupyterhub-deployment.yaml"
-		    sh "sed -i 's/CONFIG_HASH_VALUE/${CONFIG_HASH}/g' ./deploy/kubernetes/jupyterhub-deployment.yaml"
-		    sh '''
-    			kubectl apply -f ./deploy/kubernetes/jupyterhub-configs.yaml
-    			kubectl apply -f ./deploy/kubernetes/jupyterhub-deployment.yaml
-    			kubectl apply -f ./deploy/kubernetes/storage.yaml
-		    '''
-		}
+                dir('deploy/kubernetes') {
+                    withAWS(credentials:'aws-jenkins-eks') {
+                        sh "aws --region ${AWS_REGION} eks update-kubeconfig --name ${KUBERNETES_CLUSTER_NAME}"
+                        sh "sed -i 's/NOTEBOOK_VERSION_VALUE/${NOTEBOOK_VERSION}/g' jupyterhub-configs.yaml"
+                        sh "sed -i 's/STORAGE_PER_USER_VALUE/${STORAGE_PER_USER}/g' jupyterhub-configs.yaml"
+                        sh "sed -i 's/STORAGE_SHARED_VALUE/${STORAGE_SHARED}/g' storage.yaml"
+                        sh "sed -i 's/HUB_VERSION_VALUE/${HUB_VERSION}/g' jupyterhub-deployment.yaml"
+
+                        # Calculate config hash after substitution to connect configuration changes to deployment
+                        env.CONFIG_HASH = sh "shasum jupyterhub-configs.yaml | cut -d ' ' -f 1 | tr -d '\n'"
+
+                        sh "sed -i 's/CONFIG_HASH_VALUE/${CONFIG_HASH}/g' jupyterhub-deployment.yaml"
+                        sh '''
+                            kubectl apply -f jupyterhub-configs.yaml
+                            kubectl apply -f jupyterhub-deployment.yaml
+                            kubectl apply -f storage.yaml
+                        '''
+                    }
+                }
             }
         }
     }
