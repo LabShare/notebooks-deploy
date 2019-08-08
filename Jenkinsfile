@@ -82,17 +82,20 @@ pipeline {
         stage('Deploy JupyterHub to Kubernetes') {
             steps {
                 dir('deploy/kubernetes') {
-                    withAWS(credentials:'aws-jenkins-eks') {
-                        sh "aws --region ${AWS_REGION} eks update-kubeconfig --name ${KUBERNETES_CLUSTER_NAME}"
+                    script {
                         sh "sed -i 's/NOTEBOOK_VERSION_VALUE/${NOTEBOOK_VERSION}/g' jupyterhub-configs.yaml"
                         sh "sed -i 's/STORAGE_PER_USER_VALUE/${STORAGE_PER_USER}/g' jupyterhub-configs.yaml"
                         sh "sed -i 's/STORAGE_SHARED_VALUE/${STORAGE_SHARED}/g' storage.yaml"
                         sh "sed -i 's/HUB_VERSION_VALUE/${HUB_VERSION}/g' jupyterhub-deployment.yaml"
 
                         // Calculate config hash after substitution to connect configuration changes to deployment
-                        env.CONFIG_HASH = sh "shasum jupyterhub-configs.yaml | cut -d ' ' -f 1 | tr -d '\n'"
+                        env.CONFIG_HASH = sh(script: "shasum jupyterhub-configs.yaml | cut -d ' ' -f 1 | tr -d '\n'", returnStdout: true)
 
                         sh "sed -i 's/CONFIG_HASH_VALUE/${CONFIG_HASH}/g' jupyterhub-deployment.yaml"
+                    }
+                    withAWS(credentials:'aws-jenkins-eks') {
+                        sh "aws --region ${AWS_REGION} eks update-kubeconfig --name ${KUBERNETES_CLUSTER_NAME}"
+
                         sh '''
                             kubectl apply -f jupyterhub-configs.yaml
                             kubectl apply -f jupyterhub-deployment.yaml
