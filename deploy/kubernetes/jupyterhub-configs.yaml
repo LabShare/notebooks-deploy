@@ -46,7 +46,7 @@ data:
     # Where to mount volumes
     c.KubeSpawner.volume_mounts = [
       {
-        'mountPath': '/home/jovyan',
+        'mountPath': '/home/jovyan/work',
         'name': 'volume-{username}'
       },
       {
