@@ -17,7 +17,7 @@ data:
     c.KubeSpawner.default_url = '/lab'
     c.KubeSpawner.uid = 1000 #uid 1000 corresponds to jovyan, uid 0 to root
     c.KubeSpawner.cmd = ['jupyter-labhub']
-    c.KubeSpawner.working_dir = '/home/jovyan'
+    c.KubeSpawner.working_dir = '/home/jovyan/work'
     c.KubeSpawner.service_account='jupyteruser-sa'
 
     # Per-user storage configuration
@@ -46,7 +46,7 @@ data:
     # Where to mount volumes
     c.KubeSpawner.volume_mounts = [
       {
-        'mountPath': '/home/jovyan',
+        'mountPath': '/home/jovyan/work',
         'name': 'volume-{username}'
       },
       {
