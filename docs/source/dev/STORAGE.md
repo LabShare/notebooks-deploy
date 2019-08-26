@@ -1,8 +1,10 @@
-Prerequisites:
+# Storage
+
+## Prerequisites
 
 To deploy Shared Filesystem on Rook/Ceph, at least 3 k8s nodes are required.
 
-Description:
+## Description
 
 Rook/Ceph k8s configuration is condensed into single file `deploy/kubernetes/infrastructure/rook-ceph.yaml`. 
 Configuration for `common` and `operator` are taken from https://github.com/rook/rook/blob/master/cluster/examples/kubernetes/ceph/ without changes. 
@@ -13,8 +15,10 @@ https://rook.io/docs/rook/v1.0/ceph-quickstart.html
 and
 https://rook.io/docs/rook/v1.0/ceph-filesystem.html
 
-Usage:
+## Usage
 
+```
 kubectl create -f deploy/kubernetes/infrastructure/rook-ceph.yaml
+```
 
 This will deploy Rook Operator, Ceph Cluster and Shared Filesystem available to all pods in cluster
