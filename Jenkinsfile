@@ -18,8 +18,13 @@ pipeline {
             script: "git diff --name-only ${GIT_PREVIOUS_SUCCESSFUL_COMMIT} ${GIT_COMMIT} | grep 'notebook/VERSION'",
             returnStatus: true
         )}"""
+        BUILD_DOCS = """${sh (
+            script: "git diff --name-only ${GIT_PREVIOUS_SUCCESSFUL_COMMIT} ${GIT_COMMIT} | grep 'docs/VERSION'",
+            returnStatus: true
+        )}"""
         HUB_VERSION = readFile(file: 'deploy/docker/jupyterhub/VERSION')
         NOTEBOOK_VERSION = readFile(file: 'deploy/docker/notebook/VERSION')
+        DOCS_VERSION = readFile(file: 'deploy/docker/docs/VERSION')
         STORAGE_PER_USER = "100Mi"
         STORAGE_SHARED = "80Gi"
     }
@@ -74,6 +79,24 @@ pipeline {
                             def image = docker.build('labshare/polyglot-notebook:latest', '--no-cache ./')
                             image.push()
                             image.push(env.NOTEBOOK_VERSION)
+                        }
+                    }
+                }
+            }
+        }
+        stage('Build Notebooks documentation') {
+            when {
+                environment name: 'SKIP_BUILD', value: 'false'
+                environment name: 'BUILD_DOCS', value: '0'
+            }
+            steps {
+                script {
+                    dir('deploy/docker/docs') {
+                        sh "cp -r ../../../docs/* ."
+                        docker.withRegistry('https://registry-1.docker.io/v2/', 'f16c74f9-0a60-4882-b6fd-bec3b0136b84') {
+                            def image = docker.build('labshare/notebook-docs:latest', '--no-cache ./')
+                            image.push()
+                            image.push(env.DOCS_VERSION)
                         }
                     }
                 }
