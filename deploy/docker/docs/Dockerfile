@@ -1,14 +1,14 @@
 FROM jupyter/minimal-notebook:latest
 
-# Track semantic versioning
-COPY VERSION /
-
 COPY --chown=1000 ./source source
 COPY --chown=1000 ./source_nbs source_nbs
 COPY --chown=1000 ./convert.sh .
 RUN sh convert.sh
 
 FROM alpine:latest
+
+# Track semantic versioning
+COPY VERSION /
 
 # Setup the folder hierarchy
 WORKDIR /etc/
