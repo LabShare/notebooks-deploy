@@ -1,5 +1,8 @@
 FROM jupyter/minimal-notebook:latest
 
+# Track semantic versioning
+COPY VERSION /
+
 COPY --chown=1000 ./source source
 COPY --chown=1000 ./source_nbs source_nbs
 COPY --chown=1000 ./convert.sh .
@@ -14,7 +17,6 @@ RUN mkdir /etc/Sphinx/build
 
 #Add the static files
 COPY --from=0 /home/jovyan/source /etc/Sphinx/source
-#COPY . /etc/Sphinx/
 
 #Install python3, make, sphinx and all addons
 RUN apk add --no-cache python3 make bash
