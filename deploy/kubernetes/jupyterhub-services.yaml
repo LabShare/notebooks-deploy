@@ -12,7 +12,7 @@ metadata:
     service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
     service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
 spec:
-  type: LoadBalancer
+  type: NodePort
   loadBalancerIP:
   ports:
   - port: 443
