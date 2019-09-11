@@ -1,4 +1,4 @@
-FROM jupyter/minimal-notebook:307ad2bb5fce
+FROM jupyter/minimal-notebook:2ce7c06a61a1
 
 LABEL maintainer "konstantin.taletskiy@axleinfo.com"
 
@@ -41,6 +41,26 @@ ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 
 COPY mvn-entrypoint.sh /usr/local/bin/mvn-entrypoint.sh
 COPY settings-docker.xml /usr/share/maven/ref/
+
+# Julia dependencies
+# install Julia packages in /opt/julia instead of $HOME
+ENV JULIA_DEPOT_PATH=/opt/julia
+ENV JULIA_PKGDIR=/opt/julia
+ENV JULIA_VERSION=1.1.1
+RUN mkdir /opt/julia-${JULIA_VERSION} && \
+    cd /tmp && \
+    wget -q https://julialang-s3.julialang.org/bin/linux/x64/`echo ${JULIA_VERSION} | cut -d. -f 1,2`/julia-${JULIA_VERSION}-linux-x86_64.tar.gz && \
+    echo "f0a83a139a89a2ccf2316814e5ee1c0c809fca02cbaf4baf3c1fd8eb71594f06 *julia-${JULIA_VERSION}-linux-x86_64.tar.gz" | sha256sum -c - && \
+    tar xzf julia-${JULIA_VERSION}-linux-x86_64.tar.gz -C /opt/julia-${JULIA_VERSION} --strip-components=1 && \
+    rm /tmp/julia-${JULIA_VERSION}-linux-x86_64.tar.gz
+RUN ln -fs /opt/julia-*/bin/julia /usr/local/bin/julia
+# Show Julia where conda libraries are \
+RUN mkdir /etc/julia && \
+    echo "push!(Libdl.DL_LOAD_PATH, \"$CONDA_DIR/lib\")" >> /etc/julia/juliarc.jl && \
+    # Create JULIA_PKGDIR \
+    mkdir $JULIA_PKGDIR && \
+    chown $NB_USER $JULIA_PKGDIR && \
+    fix-permissions $JULIA_PKGDIR
 
 USER $NB_UID
 
@@ -113,15 +133,16 @@ RUN conda install --quiet --yes \
                 octave_kernel==0.31.0 \
                 bash_kernel==0.7.2 \
                 nbformat==4.4.0 \
-                sos-notebook==0.19.15 \
+                sos-notebook==0.19.18 \
                 sos-r==0.19.1 \
                 sos-bash==0.18.1 \
                 sos-matlab==0.18.3 \
                 sos-scala==0.18.0 \ 
                 sos-javascript==0.18.0 \
-                sos-python==0.18.1 \
+                sos-python==0.18.2 \
                 sos-xeus-cling==0.1.0 \
                 sos-java==0.1.0 \
+                sos-julia==0.18.2 \
                 nbdime==1.0.7 \
                 jupyterlab-git==0.6.1 \
                 jupyterlab-quickopen==0.3.0 && \
@@ -152,6 +173,23 @@ RUN conda install --quiet --yes \
     rm -rf /home/$NB_USER/.node-gyp && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
+
+# Add Julia packages. Only add HDF5 if this is not a test-only build since
+# it takes roughly half the entire build time of all of the images on Travis
+# to add this one package and often causes Travis to timeout.
+#
+# Install IJulia as jovyan and then move the kernelspec out
+# to the system share location. Avoids problems with runtime UID change not
+# taking effect properly on the .local folder in the jovyan home dir.
+RUN julia -e 'import Pkg; Pkg.update()' && \
+    julia -e "using Pkg; \
+              pkg\"add Feather DataFrames NamedArrays Gadfly RDatasets IJulia InstantiateFromURL HDF5 https://github.com/probcomp/Gen\";\
+              pkg\"precompile\"" && \
+    # move kernelspec out of home \
+    mv $HOME/.local/share/jupyter/kernels/julia* $CONDA_DIR/share/jupyter/kernels/ && \
+    chmod -R go+rx $CONDA_DIR/share/jupyter && \
+    rm -rf $HOME/.local && \
+    fix-permissions $JULIA_PKGDIR $CONDA_DIR/share/jupyter
 
 # Install facets which does not have a pip or conda package at the moment
 RUN cd /tmp && \
