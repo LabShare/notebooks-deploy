@@ -1,28 +1,19 @@
-# Service definition for a http/https service.
+# External JupyterHub UI Service definition
 apiVersion: v1
 kind: Service
 metadata:
   name: jupyterhub
-  annotations:
-    # Note that the backend talks over TCP. Required to enable websocket connections.
-    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "tcp"
-    # Fill in with the ARN of your certificate.
-    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-east-1:063208468694:certificate/63a30186-d66a-411c-b5c2-5264ca23c2b1
-    # Only run SSL on the port named "https" below.
-    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
-    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600"
+  namespace: default
 spec:
   type: NodePort
-  loadBalancerIP:
   ports:
-  - port: 443
-    name: https
-    # Use named container port.
+  - port: 80
+    name: http
     targetPort: jupyter-http
   selector:
     application: jupyterhub
 ---
-# Service definition for a http/https service.
+# Internal JUpyterHub API Service definition
 apiVersion: v1
 kind: Service
 metadata:
@@ -35,4 +26,22 @@ spec:
     targetPort: jupyter-in
   selector:
     application: jupyterhub
-
+---
+# Nginx ingress definition
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  name: labshare-polus-jupyterhub
+spec:
+  rules:
+  - host: JUPYTERHUB_URL_VALUE
+    http:
+      paths:
+      - backend:
+          serviceName: jupyterhub
+          servicePort: 80
+        path: /

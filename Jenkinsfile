@@ -27,6 +27,7 @@ pipeline {
         DOCS_VERSION = readFile(file: 'deploy/docker/docs/VERSION')
         STORAGE_PER_USER = "100Mi"
         STORAGE_SHARED = "80Gi"
+        JUPYTERHUB_URL = "j.ci.aws.labshare.org"
     }
     triggers {
         pollSCM('H/5 * * * *')
@@ -110,6 +111,7 @@ pipeline {
                         sh "sed -i 's/STORAGE_PER_USER_VALUE/${STORAGE_PER_USER}/g' jupyterhub-configs.yaml"
                         sh "sed -i 's/STORAGE_SHARED_VALUE/${STORAGE_SHARED}/g' storage.yaml"
                         sh "sed -i 's/HUB_VERSION_VALUE/${HUB_VERSION}/g' jupyterhub-deployment.yaml"
+                        sh "sed -i 's|JUPYTERHUB_URL_VALUE|${JUPYTERHUB_URL}|g' jupyterhub-services.yaml"
 
                         // Calculate config hash after substitution to connect configuration changes to deployment
                         env.CONFIG_HASH = sh(script: "shasum jupyterhub-configs.yaml | cut -d ' ' -f 1 | tr -d '\n'", returnStdout: true)
@@ -122,6 +124,7 @@ pipeline {
                         sh '''
                             kubectl apply -f jupyterhub-configs.yaml
                             kubectl apply -f jupyterhub-deployment.yaml
+                            kubectl apply -f jupyterhub-services.yaml
                             kubectl apply -f storage.yaml
                         '''
                     }
