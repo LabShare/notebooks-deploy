@@ -1,5 +1,6 @@
 FROM jupyter/minimal-notebook:latest
 
+COPY --chown=1000 ./img img
 COPY --chown=1000 ./source source
 COPY --chown=1000 ./source_nbs source_nbs
 COPY --chown=1000 ./convert.sh .
