@@ -35,7 +35,7 @@ metadata:
     kubernetes.io/ingress.class: nginx
     kubernetes.io/tls-acme: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  name: labshare-polus-jupyterhub
+  name: jupyterhub-ingress
 spec:
   rules:
   - host: JUPYTERHUB_URL_VALUE
