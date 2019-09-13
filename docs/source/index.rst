@@ -7,7 +7,6 @@ Welcome to Polus Notebooks's documentation!
 
    user/polyglot
    user/installing_packages
-   user/visualizations
 
 .. toctree::
    :maxdepth: 2
