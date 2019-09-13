@@ -17,6 +17,7 @@ RUN mkdir /etc/Sphinx
 RUN mkdir /etc/Sphinx/build
 
 #Add the static files
+COPY --from=0 /home/jovyan/img /etc/Sphinx/img
 COPY --from=0 /home/jovyan/source /etc/Sphinx/source
 
 #Install python3, make, sphinx and all addons
