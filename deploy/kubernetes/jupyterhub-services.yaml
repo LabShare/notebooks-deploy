@@ -13,7 +13,7 @@ spec:
   selector:
     application: jupyterhub
 ---
-# Internal JUpyterHub API Service definition
+# Internal JupyterHub API Service definition
 apiVersion: v1
 kind: Service
 metadata:
