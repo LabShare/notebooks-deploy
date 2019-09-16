@@ -123,9 +123,9 @@ RUN conda install --quiet --yes \
                 octave_kernel==0.31.0 \
                 bash_kernel==0.7.2 \
                 nbformat==4.4.0 \
-                sos-notebook==0.19.18 \
+                sos-notebook==0.20.2 \
                 sos-r==0.19.1 \
-                sos-bash==0.18.1 \
+                sos-bash==0.19.0 \
                 sos-matlab==0.18.3 \
                 sos-scala==0.18.0 \ 
                 sos-javascript==0.18.0 \
@@ -133,9 +133,10 @@ RUN conda install --quiet --yes \
                 sos-xeus-cling==0.1.0 \
                 sos-java==0.1.0 \
                 sos-julia==0.18.2 \
-                nbdime==1.0.7 \
-                jupyterlab-git==0.6.1 \
-                jupyterlab-quickopen==0.3.0 && \
+                nbdime==1.1.0 \
+                jupyterlab-git==0.8.1 \
+                jupyterlab-quickopen==0.3.0 \
+                opencv-python==4.1.1.26 && \
     # conda remove --quiet --yes --force qt pyqt && \
     conda clean -tipsy && \
     # Install Jupyter Server extensions
@@ -145,17 +146,17 @@ RUN conda install --quiet --yes \
     # Install JupyterLab extensions
     jupyter labextension install @jupyter-widgets/jupyterlab-manager@1.0 \
                                  jupyterlab_bokeh@1.0.0 \
-                                 transient-display-data@0.2.1 \
-                                 jupyterlab-sos@0.4.9 \
-                                 @jupyterlab/git@0.7.0 \
-                                 @jupyterlab/hub-extension@1.0.2 \
-                                 @jupyter-voila/jupyterlab-preview@0.1.0 \
-                                 itkwidgets@0.18.0 \
-                                 @aquirdturtle/collapsible_headings@0.3.1 \
+                                 transient-display-data@0.3.0 \
+                                 jupyterlab-sos@0.5.1 \
+                                 @jupyterlab/git@0.8.2 \
+                                 @jupyterlab/hub-extension@1.1.2 \
+                                 @jupyter-voila/jupyterlab-preview@0.1.2 \
+                                 itkwidgets@0.20.1 \
+                                 @aquirdturtle/collapsible_headings@0.3.3 \
                                  jupyterlab-python-file@0.3.0 \
                                  @parente/jupyterlab-quickopen@0.3.0 \
-                                 jupyterlab-spreadsheet@0.1.0 \
-                                 @krassowski/jupyterlab_go_to_definition@0.6.1 \
+                                 jupyterlab-spreadsheet@0.2.0 \
+                                 @krassowski/jupyterlab_go_to_definition@0.7.1 \
                                  jupyterlab_filetree@0.2.1 && \
     npm cache clean --force && \
     rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
