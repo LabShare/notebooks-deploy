@@ -1,4 +1,4 @@
-FROM jupyter/minimal-notebook:2ce7c06a61a1
+FROM jupyter/minimal-notebook:1386e2046833
 
 LABEL maintainer "konstantin.taletskiy@axleinfo.com"
 
@@ -237,6 +237,7 @@ COPY bash.png /home/jovyan/.local/share/jupyter/kernels/bash/logo-64x64.png
 RUN ln -s /opt/shared shared
 
 #Rebuid JupyterLab to make sure all labextensions are included
+RUN jupyter lab clean
 RUN jupyter lab build
 
 EXPOSE 8888
