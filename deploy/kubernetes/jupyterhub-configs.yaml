@@ -83,6 +83,11 @@ data:
     c.LocalGenericOAuthenticator.create_system_users = True
     c.LocalGenericOAuthenticator.add_user_cmd = ['adduser', '-q', '--gecos', '""', '--disabled-password', '--force-badname']
 
+    # Set up WIPP UI url for integration with WIPP
+    c.KubeSpawner.environment = {
+        'WIPP_UI_URL': 'WIPP_UI_NOTEBOOKS_VALUE'
+    }
+
     # Service to shutdown inactive Notebook servers after --timeout seconds
     c.JupyterHub.services = [
         {
