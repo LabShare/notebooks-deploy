@@ -230,6 +230,11 @@ RUN python -m bash_kernel.install --user && \
     python -m octave_kernel install --user && \
     python -m sos_notebook.install
 
+# Install WIPP integration
+RUN pip install jupyterlab-wipp && \
+    jupyter serverextension enable --py jupyterlab_wipp && \
+    jupyter labextension install jupyterlab_wipp
+
 # Add missing kernel logos
 COPY coffee.png /opt/conda/share/jupyter/kernels/java/logo-64x64.png
 COPY bash.png /home/jovyan/.local/share/jupyter/kernels/bash/logo-64x64.png
