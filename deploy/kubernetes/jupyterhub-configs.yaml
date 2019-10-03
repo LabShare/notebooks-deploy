@@ -40,6 +40,12 @@ data:
         'persistentVolumeClaim': {
           'claimName': 'notebooks-pv-claim'
         }
+      },
+      {
+        'name': 'wipp-volume',
+        'persistentVolumeClaim': {
+          'claimName': 'wipp-pv-claim'
+        }
       }
     ]
 
@@ -52,6 +58,10 @@ data:
       {
         'mountPath': '/opt/shared/notebooks',
         'name': 'shared-volume'
+      },
+      {
+        'mountPath': '/opt/shared/wipp',
+        'name': 'wipp-volume'
       }
     ]
 
