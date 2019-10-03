@@ -28,7 +28,7 @@ pipeline {
         STORAGE_PER_USER = "100Mi"
         STORAGE_SHARED = "80Gi"
         JUPYTERHUB_URL = "j.ci.aws.labshare.org"
-        WIPP_UI_NOTEBOOKS = "wipp-ui.ci.aws.labshare.org/notebooks/" //DO NOT FORGET THE TRAILING SLASH
+        WIPP_UI_NOTEBOOKS = "https://wipp-ui.ci.aws.labshare.org/notebooks/" //DO NOT FORGET HTTPS AND TRAILING SLASH
     }
     triggers {
         pollSCM('H/5 * * * *')
