@@ -22,7 +22,7 @@ data:
 
     # Per-user storage configuration
     c.KubeSpawner.pvc_name_template = 'claim-{username}'
-    c.KubeSpawner.storage_class = 'rook-ceph-block'
+    c.KubeSpawner.storage_class = 'rook-cephfs'
     c.KubeSpawner.storage_capacity = 'STORAGE_PER_USER_VALUE'
     c.KubeSpawner.storage_access_modes = ['ReadWriteOnce']
     c.KubeSpawner.storage_pvc_ensure = True
@@ -38,7 +38,13 @@ data:
       {
         'name': 'shared-volume',
         'persistentVolumeClaim': {
-          'claimName': 'shared-pv-claim'
+          'claimName': 'notebooks-pv-claim'
+        }
+      },
+      {
+        'name': 'wipp-volume',
+        'persistentVolumeClaim': {
+          'claimName': 'wipp-pv-claim'
         }
       }
     ]
@@ -50,8 +56,12 @@ data:
         'name': 'volume-{username}'
       },
       {
-        'mountPath': '/opt/shared',
+        'mountPath': '/opt/shared/notebooks',
         'name': 'shared-volume'
+      },
+      {
+        'mountPath': '/opt/shared/wipp',
+        'name': 'wipp-volume'
       }
     ]
 

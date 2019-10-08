@@ -4,50 +4,36 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-   name: rook-ceph-block
-provisioner: ceph.rook.io/block
+  name: rook-cephfs
+# Change "rook-ceph" provisioner prefix to match the operator namespace if needed
+provisioner: rook-ceph.cephfs.csi.ceph.com
 parameters:
-  blockPool: replicapool
-  # The value of "clusterNamespace" MUST be the same as the one in which your rook cluster exist
-  clusterNamespace: rook-ceph
-  # Specify the filesystem type of the volume. If not specified, it will use `ext4`.
-  fstype: xfs
-# Optional, default reclaimPolicy is "Delete". Other options are: "Retain", "Recycle" as documented in https://kubernetes.io/docs/concepts/storage/storage-classes/
-reclaimPolicy: Delete
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  labels:
-    name: shared-volume
-  name: shared-pv
-spec:
-  accessModes:
-  - ReadWriteMany
-  capacity:
-    storage: STORAGE_SHARED_VALUE
-  flexVolume:
-    driver: ceph.rook.io/rook
-    fsType: ceph
-    options:
-      clusterNamespace: rook-ceph
-      fsName: myfs
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: rook-ceph-block
+  # clusterID is the namespace where operator is deployed.
+  clusterID: rook-ceph
 
+  # CephFS filesystem name into which the volume shall be created
+  fsName: myfs
+
+  # The secrets contain Ceph admin credentials. These are generated automatically by the operator
+  # in the same namespace as the cluster.
+  csi.storage.k8s.io/provisioner-secret-name: rook-ceph-csi
+  csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
+  csi.storage.k8s.io/node-stage-secret-name: rook-ceph-csi
+  csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
+
+reclaimPolicy: Retain
 ---
-# PVC for shared filesystem for all Jupyter users
+#################################################################################################################
+# Create PVC for shared notebook storage
+#################################################################################################################
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: shared-pv-claim
+  name: notebooks-pv-claim
 spec:
-  storageClassName: rook-ceph-block
+  storageClassName: rook-cephfs
   accessModes:
   - ReadWriteMany
-  selector:
-    matchLabels:
-      name: shared-volume
   resources:
     requests:
-      storage: STORAGE_SHARED_VALUE
+      storage: 5Gi

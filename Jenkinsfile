@@ -25,8 +25,7 @@ pipeline {
         HUB_VERSION = readFile(file: 'deploy/docker/jupyterhub/VERSION')
         NOTEBOOK_VERSION = readFile(file: 'deploy/docker/notebook/VERSION')
         DOCS_VERSION = readFile(file: 'deploy/docker/docs/VERSION')
-        STORAGE_PER_USER = "100Mi"
-        STORAGE_SHARED = "80Gi"
+        STORAGE_PER_USER = "1Gi"
         JUPYTERHUB_URL = "j.ci.aws.labshare.org"
         WIPP_UI_NOTEBOOKS = "wipp-ui.ci.aws.labshare.org/notebooks/" //DO NOT FORGET THE TRAILING SLASH
     }
@@ -111,7 +110,6 @@ pipeline {
                         sh "sed -i 's/NOTEBOOK_VERSION_VALUE/${NOTEBOOK_VERSION}/g' jupyterhub-configs.yaml"
                         sh "sed -i 's/STORAGE_PER_USER_VALUE/${STORAGE_PER_USER}/g' jupyterhub-configs.yaml"
                         sh "sed -i 's|WIPP_UI_NOTEBOOKS_VALUE|${WIPP_UI_NOTEBOOKS}|g' jupyterhub-configs.yaml"
-                        sh "sed -i 's/STORAGE_SHARED_VALUE/${STORAGE_SHARED}/g' storage.yaml"
                         sh "sed -i 's/HUB_VERSION_VALUE/${HUB_VERSION}/g' jupyterhub-deployment.yaml"
                         sh "sed -i 's|JUPYTERHUB_URL_VALUE|${JUPYTERHUB_URL}|g' jupyterhub-services.yaml"
 
