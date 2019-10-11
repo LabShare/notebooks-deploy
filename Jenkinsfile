@@ -26,6 +26,9 @@ pipeline {
         NOTEBOOK_VERSION = readFile(file: 'deploy/docker/notebook/VERSION')
         DOCS_VERSION = readFile(file: 'deploy/docker/docs/VERSION')
         STORAGE_PER_USER = "1Gi"
+        STORAGE_CLASS = "rook-cephfs"
+        SHARED_STORAGE = "5Gi"
+        WIPP_STORAGE_PVC = "wipp-pv-claim"
         JUPYTERHUB_URL = "j.ci.aws.labshare.org"
         WIPP_UI_NOTEBOOKS = "wipp-ui.ci.aws.labshare.org/notebooks/" //DO NOT FORGET THE TRAILING SLASH
     }
@@ -107,8 +110,11 @@ pipeline {
             steps {
                 dir('deploy/kubernetes') {
                     script {
+                        sh "sed -i 's/SHARED_STORAGE_VALUE/${SHARED_STORAGE}/g' storage.yaml"
+                        sh "sed -i 's/STORAGE_CLASS_VALUE/${STORAGE_CLASS}/g' storage.yaml"
                         sh "sed -i 's/NOTEBOOK_VERSION_VALUE/${NOTEBOOK_VERSION}/g' jupyterhub-configs.yaml"
                         sh "sed -i 's/STORAGE_PER_USER_VALUE/${STORAGE_PER_USER}/g' jupyterhub-configs.yaml"
+                        sh "sed -i 's/WIPP_STORAGE_PVC_VALUE/${WIPP_STORAGE_PVC}/g' jupyterhub-configs.yaml"
                         sh "sed -i 's|WIPP_UI_NOTEBOOKS_VALUE|${WIPP_UI_NOTEBOOKS}|g' jupyterhub-configs.yaml"
                         sh "sed -i 's/HUB_VERSION_VALUE/${HUB_VERSION}/g' jupyterhub-deployment.yaml"
                         sh "sed -i 's|JUPYTERHUB_URL_VALUE|${JUPYTERHUB_URL}|g' jupyterhub-services.yaml"
@@ -122,10 +128,10 @@ pipeline {
                         sh "aws --region ${AWS_REGION} eks update-kubeconfig --name ${KUBERNETES_CLUSTER_NAME}"
 
                         sh '''
-                            kubectl apply -f jupyterhub-configs.yaml
-                            kubectl apply -f jupyterhub-deployment.yaml
-                            kubectl apply -f jupyterhub-services.yaml
                             kubectl apply -f storage.yaml
+                            kubectl apply -f jupyterhub-configs.yaml
+                            kubectl apply -f jupyterhub-services.yaml
+                            kubectl apply -f jupyterhub-deployment.yaml
                         '''
                     }
                 }

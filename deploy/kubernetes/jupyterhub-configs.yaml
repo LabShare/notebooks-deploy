@@ -44,7 +44,7 @@ data:
       {
         'name': 'wipp-volume',
         'persistentVolumeClaim': {
-          'claimName': 'wipp-pv-claim'
+          'claimName': 'WIPP_STORAGE_PVC_VALUE'
         }
       }
     ]

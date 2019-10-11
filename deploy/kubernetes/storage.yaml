@@ -31,9 +31,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: notebooks-pv-claim
 spec:
-  storageClassName: rook-cephfs
+  storageClassName: STORAGE_CLASS_VALUE
   accessModes:
   - ReadWriteMany
   resources:
     requests:
-      storage: 5Gi
+      storage: SHARED_STORAGE_VALUE
