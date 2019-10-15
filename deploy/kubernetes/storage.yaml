@@ -1,29 +1,4 @@
 #################################################################################################################
-# Create StorageClass for using PVCs with Rook/Ceph
-#################################################################################################################
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: rook-cephfs
-# Change "rook-ceph" provisioner prefix to match the operator namespace if needed
-provisioner: rook-ceph.cephfs.csi.ceph.com
-parameters:
-  # clusterID is the namespace where operator is deployed.
-  clusterID: rook-ceph
-
-  # CephFS filesystem name into which the volume shall be created
-  fsName: myfs
-
-  # The secrets contain Ceph admin credentials. These are generated automatically by the operator
-  # in the same namespace as the cluster.
-  csi.storage.k8s.io/provisioner-secret-name: rook-ceph-csi
-  csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
-  csi.storage.k8s.io/node-stage-secret-name: rook-ceph-csi
-  csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
-
-reclaimPolicy: Retain
----
-#################################################################################################################
 # Create PVC for shared notebook storage
 #################################################################################################################
 apiVersion: v1
@@ -31,9 +6,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: notebooks-pv-claim
 spec:
-  storageClassName: rook-cephfs
+  storageClassName: STORAGE_CLASS_VALUE
   accessModes:
   - ReadWriteMany
   resources:
     requests:
-      storage: 5Gi
+      storage: SHARED_STORAGE_VALUE
