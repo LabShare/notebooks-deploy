@@ -2,11 +2,11 @@
 
 ## User documentation:
 
-[Polyglot features](./user/polyglot)
+[Polyglot features](./user/polyglot.rst)
 
-[Installing new packages](./user/installing_packages)
+[Installing new packages](./user/installing_packages.rst)
 
 
 ## Developer documentation:
 
-[Using Ceph Storage with Notebooks](./dev/STORAGE)
+[Using Ceph Storage with Notebooks](./dev/STORAGE.rst)
