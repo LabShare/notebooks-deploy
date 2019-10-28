@@ -20,7 +20,7 @@ With ``conda``
 1. Use `Anaconda Cloud <https://anaconda.org>`__ to search for package
    you are interested in
 
-.. figure:: ../img/anaconda_cloud_1.png
+.. figure:: ../../img/anaconda_cloud_1.png
    :alt: anaconda_cloud_1
 
    anaconda_cloud_1
@@ -28,21 +28,21 @@ With ``conda``
 2. Choose the package you are looking for. Most of the community
    packages are published through ``conda-forge`` account
 
-.. figure:: ../img/anaconda_cloud_2.png
+.. figure:: ../../img/anaconda_cloud_2.png
    :alt: anaconda_cloud_2
 
    anaconda_cloud_2
 
 3. Copy the install command and paste it to the notebook cell
 
-.. figure:: ../img/anaconda_cloud_3.png
+.. figure:: ../../img/anaconda_cloud_3.png
    :alt: anaconda_cloud_3
 
    anaconda_cloud_3
 
 You have to append ``--yes`` to the end of the command
 
-.. figure:: ../img/anaconda_cloud_4.png
+.. figure:: ../../img/anaconda_cloud_4.png
    :alt: anaconda_cloud_4
 
    anaconda_cloud_4
@@ -53,21 +53,21 @@ With ``pip``
 1. Use `Python Package Index (PyPi) <https://pypi.org>`__ to search for
    package you are interested in
 
-.. figure:: ../img/pypi_1.png
+.. figure:: ../../img/pypi_1.png
    :alt: pypi_1
 
    pypi_1
 
 2. Choose the package you are looking for.
 
-.. figure:: ../img/pypi_2.png
+.. figure:: ../../img/pypi_2.png
    :alt: pypi_2
 
    pypi_2
 
 3. Copy the install command and paste it to the notebook cell
 
-.. figure:: ../img/pypi_3.png
+.. figure:: ../../img/pypi_3.png
    :alt: pypi_3
 
    pypi_3
@@ -75,7 +75,7 @@ With ``pip``
 You have to use exclamation mark before the command to let Jupyter know
 that this is shell command
 
-.. figure:: ../img/pypi_4.png
+.. figure:: ../../img/pypi_4.png
    :alt: pypi_4
 
    pypi_4
@@ -98,7 +98,7 @@ With Anaconda
 1. Use `Anaconda Cloud <https://anaconda.org>`__ to search for R
    packages you are interested in
 
-.. figure:: ../img/anaconda_cloud_1.png
+.. figure:: ../../img/anaconda_cloud_1.png
    :alt: anaconda_cloud_1
 
    anaconda_cloud_1
@@ -107,14 +107,14 @@ With Anaconda
    through ``r/`` or ``conda-forge/`` repos and their names start with
    ``r-``
 
-.. figure:: ../img/r_anaconda_cloud_2.png
+.. figure:: ../../img/r_anaconda_cloud_2.png
    :alt: r_anaconda_cloud\_
 
    r_anaconda_cloud\_
 
 3. Copy the install command and paste it to the notebook cell
 
-.. figure:: ../img/r_anaconda_cloud_3.png
+.. figure:: ../../img/r_anaconda_cloud_3.png
    :alt: r_anaconda_cloud_3
 
    r_anaconda_cloud_3

@@ -1,4 +1,4 @@
-for nb in source_nbs/*.ipynb; do
+for nb in source_nbs/user/*.ipynb; do
     filename=${nb%.ipynb}
-    jupyter nbconvert --to rst $filename --output ../source/user/${filename##*/}
+    jupyter nbconvert --to rst $filename --output ../../source/user/${filename##*/}
 done
