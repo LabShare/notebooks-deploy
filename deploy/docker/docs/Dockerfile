@@ -1,5 +1,6 @@
 FROM jupyter/minimal-notebook:latest
 
+COPY --chown=1000 ./img img
 COPY --chown=1000 ./source source
 COPY --chown=1000 ./source_nbs source_nbs
 COPY --chown=1000 ./convert.sh .
@@ -16,6 +17,7 @@ RUN mkdir /etc/Sphinx
 RUN mkdir /etc/Sphinx/build
 
 #Add the static files
+COPY --from=0 /home/jovyan/img /etc/Sphinx/source/img
 COPY --from=0 /home/jovyan/source /etc/Sphinx/source
 
 #Install python3, make, sphinx and all addons
