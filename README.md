@@ -36,3 +36,7 @@
 1. Access JupyterHub interface via External IP of `jupyterhub` service (`kubectl describe svc jupyterhub`).
 1. If using minikube, use `minikube service jupyterhub` to get the External IP.
 1. Delete deployed application using `kubectl delete -f run/jupyterhub-sample.yaml`.
+
+## Documenation
+
+See documentation [here](docs/source/index.md).
