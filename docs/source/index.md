@@ -9,4 +9,4 @@
 
 ## Developer documentation:
 
-[Using Ceph Storage with Notebooks](./dev/STORAGE.rst)
+[Using Ceph Storage with Notebooks](./dev/STORAGE.md)
