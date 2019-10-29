@@ -29,8 +29,6 @@ pipeline {
         STORAGE_CLASS = "rook-cephfs"
         SHARED_STORAGE = "5Gi"
         WIPP_STORAGE_PVC = "wipp-pv-claim"
-        JUPYTERHUB_URL = "j.ci.aws.labshare.org"
-        WIPP_UI_NOTEBOOKS = "https://wipp-ui.ci.aws.labshare.org/notebooks/" //DO NOT FORGET HTTPS AND TRAILING SLASH
     }
     triggers {
         pollSCM('H/5 * * * *')
@@ -109,21 +107,26 @@ pipeline {
         stage('Deploy JupyterHub to Kubernetes') {
             steps {
                 dir('deploy/kubernetes') {
-                    script {
-                        sh "sed -i 's/SHARED_STORAGE_VALUE/${SHARED_STORAGE}/g' storage.yaml"
-                        sh "sed -i 's/STORAGE_CLASS_VALUE/${STORAGE_CLASS}/g' storage.yaml"
-                        sh "sed -i 's/NOTEBOOK_VERSION_VALUE/${NOTEBOOK_VERSION}/g' jupyterhub-configs.yaml"
-                        sh "sed -i 's/STORAGE_PER_USER_VALUE/${STORAGE_PER_USER}/g' jupyterhub-configs.yaml"
-                        sh "sed -i 's/WIPP_STORAGE_PVC_VALUE/${WIPP_STORAGE_PVC}/g' jupyterhub-configs.yaml"
-                        sh "sed -i 's|WIPP_UI_NOTEBOOKS_VALUE|${WIPP_UI_NOTEBOOKS}|g' jupyterhub-configs.yaml"
-                        sh "sed -i 's/HUB_VERSION_VALUE/${HUB_VERSION}/g' jupyterhub-deployment.yaml"
-                        sh "sed -i 's|JUPYTERHUB_URL_VALUE|${JUPYTERHUB_URL}|g' jupyterhub-services.yaml"
+                    configFileProvider([configFile(fileId: 'env-ci', targetLocation: 'env-ci.json')]) {
+                        script {
+                            def urls = readJSON file: 'env-ci.json'
+                            
+                            sh "sed -i 's/SHARED_STORAGE_VALUE/${SHARED_STORAGE}/g' storage.yaml"
+                            sh "sed -i 's/STORAGE_CLASS_VALUE/${STORAGE_CLASS}/g' storage.yaml"
+                            sh "sed -i 's/NOTEBOOK_VERSION_VALUE/${NOTEBOOK_VERSION}/g' jupyterhub-configs.yaml"
+                            sh "sed -i 's/STORAGE_PER_USER_VALUE/${STORAGE_PER_USER}/g' jupyterhub-configs.yaml"
+                            sh "sed -i 's/WIPP_STORAGE_PVC_VALUE/${WIPP_STORAGE_PVC}/g' jupyterhub-configs.yaml"
+                            sh "sed -i 's|WIPP_UI_NOTEBOOKS_VALUE|${urls.wipp_ui_notebooks}|g' jupyterhub-configs.yaml"
+                            sh "sed -i 's/HUB_VERSION_VALUE/${HUB_VERSION}/g' jupyterhub-deployment.yaml"
+                            sh "sed -i 's|JUPYTERHUB_URL_VALUE|${urls.jupyterhub_url}|g' jupyterhub-services.yaml"
 
-                        // Calculate config hash after substitution to connect configuration changes to deployment
-                        env.CONFIG_HASH = sh(script: "shasum jupyterhub-configs.yaml | cut -d ' ' -f 1 | tr -d '\n'", returnStdout: true)
+                            // Calculate config hash after substitution to connect configuration changes to deployment
+                            env.CONFIG_HASH = sh(script: "shasum jupyterhub-configs.yaml | cut -d ' ' -f 1 | tr -d '\n'", returnStdout: true)
 
-                        sh "sed -i 's/CONFIG_HASH_VALUE/${CONFIG_HASH}/g' jupyterhub-deployment.yaml"
+                            sh "sed -i 's/CONFIG_HASH_VALUE/${CONFIG_HASH}/g' jupyterhub-deployment.yaml"
+                        }
                     }
+                    
                     withAWS(credentials:'aws-jenkins-eks') {
                         sh "aws --region ${AWS_REGION} eks update-kubeconfig --name ${KUBERNETES_CLUSTER_NAME}"
 
