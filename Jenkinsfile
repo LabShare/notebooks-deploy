@@ -106,6 +106,7 @@ pipeline {
         stage('Deploy JupyterHub to Kubernetes') {
             steps {
                 dir('deploy/kubernetes') {
+                    // Config JSON file is stored in Jenkins and should contain sensitive environment values.
                     configFileProvider([configFile(fileId: 'env-ci', targetLocation: 'env-ci.json')]) {
                         script {
                             def urls = readJSON file: 'env-ci.json'
