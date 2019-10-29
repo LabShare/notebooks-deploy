@@ -1,7 +1,7 @@
 {
-  "name": "@labshare/compute",
+  "name": "@labshare/notebooks-deploy",
   "version": "0.18.0420",
-  "description": "LabShare Compute",
+  "description": "LabShare Notebooks Deploy",
   "main": "index.js",
   "scripts": {
     "build:network": "docker network inspect jupyterhub-network >/dev/null 2>&1 || docker network create jupyterhub-network",
@@ -16,13 +16,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LabShare/compute.git"
+    "url": "git+https://github.com/LabShare/notebooks-deploy.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/LabShare/compute/issues"
+    "url": "https://github.com/LabShare/notebooks-deploy/issues"
   },
-  "homepage": "https://github.com/LabShare/compute#readme",
+  "homepage": "https://github.com/LabShare/notebooks-deploy#readme",
   "publishConfig": {
     "access": "restricted"
   },

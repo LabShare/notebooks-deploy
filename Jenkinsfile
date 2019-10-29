@@ -8,8 +8,7 @@ pipeline {
 	string(name: 'KUBERNETES_CLUSTER_NAME', defaultValue: 'kube-eks-ci-compute', description: 'Kubernetes Cluster to deploy')
     }
     environment {
-        PROJECT_NAME = "labshare-compute"
-        DOCKER_REPO_NAME = "labshare/labshare-compute"
+        PROJECT_NAME = "labshare/notebooks-deploy"
         BUILD_HUB = """${sh (
             script: "git diff --name-only ${GIT_PREVIOUS_SUCCESSFUL_COMMIT} ${GIT_COMMIT} | grep 'jupyterhub/VERSION'",
             returnStatus: true
