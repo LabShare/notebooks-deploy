@@ -72,7 +72,6 @@ RUN conda install --quiet --yes \
     'cloudpickle=1.2*' \
     'dill=0.3*' \
     'numba=0.45*' \
-    'bokeh=1.3*' \
     'sqlalchemy=1.3*' \
     'hdf5=1.10*' \
     'h5py=2.9*' \
@@ -113,11 +112,12 @@ RUN conda install --quiet --yes \
     'r-threejs=0.3*' \
     'r-rglwidget=0.2*' && \
     conda install --quiet --yes -c conda-forge \
-                                feather-format \
-                                voila \
-                                itkwidgets \
-                                dvc && \
+    'feather-format=0.4.0' \
+    'voila=0.1.17' \
+    'itkwidgets=0.22.0' \
+    'dvc=0.54.1' && \
     conda install -y -c bioconda gnuplot && \
+    conda install -c bokeh bokeh=1.4.0 jupyter_bokeh && \
     conda install xeus-cling xwidgets xtensor xtl xframe && \
     pip install \
                 octave_kernel==0.31.0 \
@@ -134,36 +134,33 @@ RUN conda install --quiet --yes \
                 sos-java==0.1.0 \
                 sos-julia==0.18.2 \
                 nbdime==1.1.0 \
-                jupyterlab-git==0.8.1 \
                 jupyterlab-quickopen==0.3.0 \
-                opencv-python==4.1.1.26 && \
-    # conda remove --quiet --yes --force qt pyqt && \
+                opencv-python==4.1.1.26 \
+                jupyterlab-wipp==0.2.0 && \
     conda clean -tipsy && \
-    # Install Jupyter Server extensions
-    jupyter serverextension enable --py jupyterlab_git && \
     # Install Jupyter Notebook extensions
     jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
     # Install JupyterLab extensions
-    jupyter labextension install @jupyter-widgets/jupyterlab-manager@1.0 \
+    jupyter labextension install \
+                                 @jupyter-widgets/jupyterlab-manager@1.0.3 \
                                  jupyterlab_bokeh@1.0.0 \
                                  transient-display-data@0.3.0 \
-                                 jupyterlab-sos@0.5.1 \
-                                 @jupyterlab/git@0.8.2 \
+                                 jupyterlab-sos@0.5.2 \
                                  @jupyterlab/hub-extension@1.1.2 \
-                                 @jupyter-voila/jupyterlab-preview@0.1.2 \
-                                 itkwidgets@0.20.1 \
-                                 @aquirdturtle/collapsible_headings@0.3.3 \
+                                 @jupyter-voila/jupyterlab-preview@0.1.3 \
+                                 itkwidgets@0.22.0 \
+                                 @aquirdturtle/collapsible_headings@0.5.0 \
                                  jupyterlab-python-file@0.3.0 \
                                  @parente/jupyterlab-quickopen@0.3.0 \
                                  jupyterlab-spreadsheet@0.2.0 \
                                  @krassowski/jupyterlab_go_to_definition@0.7.1 \
-                                 jupyterlab_filetree@0.2.1 && \
+                                 jupyterlab_wipp@0.2.0 && \
     npm cache clean --force && \
     rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
     rm -rf /home/$NB_USER/.cache/yarn && \
     rm -rf /home/$NB_USER/.node-gyp && \
     fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER
+    fix-permissions /home/$NB_USER                  
 
 # Add Julia packages. Only add HDF5 if this is not a test-only build since
 # it takes roughly half the entire build time of all of the images on Travis
@@ -231,9 +228,7 @@ RUN python -m bash_kernel.install --user && \
     python -m sos_notebook.install
 
 # Install WIPP integration
-RUN pip install jupyterlab-wipp && \
-    jupyter serverextension enable --py jupyterlab_wipp && \
-    jupyter labextension install jupyterlab_wipp
+RUN jupyter serverextension enable --py jupyterlab_wipp
 
 # Add missing kernel logos
 COPY coffee.png /opt/conda/share/jupyter/kernels/java/logo-64x64.png
@@ -243,8 +238,14 @@ COPY bash.png /home/jovyan/.local/share/jupyter/kernels/bash/logo-64x64.png
 RUN ln -s /opt/shared shared
 
 #Rebuid JupyterLab to make sure all labextensions are included
-RUN jupyter lab clean
+# RUN jupyter lab clean
 RUN jupyter lab build
+
+# Workaround to make sure latest version of jupyterlab is installed and built
+RUN pip install git+https://github.com/jupyterlab/jupyterlab-git.git && \
+    jupyter serverextension enable --py jupyterlab_git && \
+    jupyter lab clean && \
+    jupyter lab build
 
 EXPOSE 8888
 # ENTRYPOINT ["/usr/local/bin/mvn-entrypoint.sh"]
