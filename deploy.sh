@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export $(egrep -v '^#' .env)
+source .env
 
 # Backup file extension required to support Mac versions of sed
 sed -i.bak \
