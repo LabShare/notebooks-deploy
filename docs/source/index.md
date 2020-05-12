@@ -2,6 +2,8 @@
 
 ## User documentation:
 
+[Choosing modular notebook image](./user/modular-notebook.rst)
+
 [File management](./user/file-management.rst)
 
 [Installing new packages](./user/installing_packages.rst)

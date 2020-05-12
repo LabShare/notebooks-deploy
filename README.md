@@ -3,6 +3,10 @@
 
 # Notebooks Deploy
 
+## Documentation
+
+User documentation is available [here](docs/source/index.md).
+
 ## Setup
 
 1. Clone the notebooks-deploy repository from GitHub using `git clone https://github.com/LabShare/notebooks-deploy`.
