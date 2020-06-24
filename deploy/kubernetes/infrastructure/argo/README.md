@@ -17,7 +17,7 @@ Run `kubectl apply -f manifest.yaml` to deploy the Argo Workflow.
 
 The Argo Server provides an API interface to interact with Argo CRDs, as well as a client-facing UI interface to track, log, and submit Workflows. 
 
-Before deploying the Argo Server, create the secret, `argo-postgres-config` with keys, `username` and `password` in the `argo` namespace. Run `kubectl apply -f server-manifest.yaml` to deploy the Argo Server. 
+Before deploying the Argo Server, create the secret `argo-postgres-config` with keys `username` and `password` in the `argo` namespace. Run `kubectl apply -f server-manifest.yaml` to deploy the Argo Server. 
 
 * This will deploy a PostgreSQL instance for persistence logging of Workflows.
 * By default all Workflows will be logged in PostgreSQL. This can be changed in the `workflow-controller-configmap` by setting `persistence.archive` to `false`.
