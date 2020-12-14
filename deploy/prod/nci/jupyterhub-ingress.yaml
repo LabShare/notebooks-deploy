@@ -14,7 +14,11 @@ spec:
   - host: JUPYTERHUB_URL_VALUE
     http:
       paths:
+      - path: /*
+        backend:
+          serviceName: ssl-redirect
+          servicePort: use-annotation
       - backend:
           serviceName: jupyterhub
           servicePort: 80
-        path: /
+        path: /*
